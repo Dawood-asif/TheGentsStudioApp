@@ -25,6 +25,8 @@ const calendarRoutes = require('./routes/calendar.routes');
 
 const app = express();`r`n`r`n// Required for Vercel proxies so express-rate-limit can read the real client IP safely.`r`napp.set('trust proxy', 1);
 
+app.set('trust proxy', 1);
+
 app.use(helmet());
 app.use(cors({
   origin(origin, callback) {
