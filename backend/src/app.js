@@ -23,8 +23,9 @@ const notificationRoutes = require('./routes/notifications.routes');
 const staffDeviceRoutes = require('./routes/staffDevice.routes');
 const calendarRoutes = require('./routes/calendar.routes');
 
-const app = express();`r`n`r`n// Required for Vercel proxies so express-rate-limit can read the real client IP safely.`r`napp.set('trust proxy', 1);
+const app = express();
 
+// Required for Vercel/Netlify/Render proxies so express-rate-limit can read the real client IP safely.
 app.set('trust proxy', 1);
 
 app.use(helmet());
@@ -64,4 +65,3 @@ app.use(notFound);
 app.use(errorHandler);
 
 module.exports = app;
-
