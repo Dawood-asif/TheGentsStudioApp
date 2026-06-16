@@ -1,1 +1,1 @@
-redeploy valid github author
+redeploy cors netlify
