@@ -1,0 +1,56 @@
+services:
+  - type: web
+    name: the-gents-studio-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_SSL
+        value: "true"
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: REFRESH_TOKEN_EXPIRES_DAYS
+        value: "7"
+      - key: BCRYPT_SALT_ROUNDS
+        value: "10"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX
+        value: "100"
+      - key: OTP_PROVIDER
+        value: demo
+      - key: OTP_EXPIRY_MINUTES
+        value: "10"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REFRESH_TOKEN_SECRET
+        generateValue: true
+      - key: STAFF_DEVICE_API_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ADMIN_EMAIL
+        value: admin@thegentsstudio.com
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_FROM_NUMBER
+        sync: false
+      - key: TWILIO_MESSAGING_SERVICE_SID
+        sync: false
+      - key: WHATSAPP_CLOUD_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
