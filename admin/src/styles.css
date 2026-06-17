@@ -140,3 +140,15 @@ tbody tr:hover { background: rgba(212,175,55,.055); }
   .sidebar { position: static; height: auto; }
   .content { padding: 18px; }
 }
+
+.setting-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--white);
+  font-weight: 800;
+}
+.setting-check input {
+  width: auto;
+  accent-color: var(--gold);
+}
