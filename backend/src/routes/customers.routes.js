@@ -112,8 +112,27 @@ router.post('/', validate(signupSchema), asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, data: result.rows[0], message: 'Customer created successfully.' });
 }));
 
+router.post('/:id/profile-image', validate(z.object({
+  body: z.object({
+    imageData: z.string().min(40).max(2_500_000),
+  }),
+})), asyncHandler(async (req, res) => {
+  const { imageData } = req.body;
+  if (!imageData.startsWith('data:image/')) {
+    throw new ApiError(400, 'profile image must be a data:image URI');
+  }
+
+  const result = await query(
+    'UPDATE customers SET profile_image_url = $1 WHERE id = $2 RETURNING id, customer_code, full_name, phone, email, profile_image_url',
+    [imageData, req.params.id],
+  );
+  if (!result.rowCount) throw new ApiError(404, 'Customer not found');
+
+  res.json({ success: true, data: result.rows[0], message: 'Profile photo updated' });
+}));
+
 router.put('/:id', requireAdmin, asyncHandler(async (req, res) => {
-  const allowed = ['full_name','phone','email','birthday','stamps','points','visits','current_streak','longest_streak','vip','otp_verified'];
+  const allowed = ['full_name','phone','email','birthday','stamps','points','visits','current_streak','longest_streak','vip','otp_verified','profile_image_url'];
   const entries = Object.entries(req.body).filter(([key]) => allowed.includes(key));
   if (!entries.length) throw new ApiError(400, 'No allowed fields provided');
 
