@@ -1,1 +1,1 @@
-redeploy cors netlify
+Trigger Vercel deploy for VIP tiers
