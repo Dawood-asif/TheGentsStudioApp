@@ -4,8 +4,16 @@ import DataTable from '../components/DataTable.jsx';
 import { downloadCsv } from '../utils/csv.js';
 
 const fallbackCustomers = [
-  { id: 'demo-1', customer_code: 'GST-DEMO-0001', full_name: 'Demo Customer', phone: '0301 5092782', email: 'demo@example.com', stamps: 6, points: 600, visits: 6, current_streak: 4, referral_code: 'GENTSDEMO1' },
+  { id: 'demo-1', customer_code: 'GST-DEMO-0001', full_name: 'Demo Customer', phone: '0301 5092782', email: 'demo@example.com', stamps: 6, points: 600, visits: 6, current_streak: 4, referral_code: 'GENTSDEMO1', profile_image_url: '' },
 ];
+
+function CustomerPhoto({ row }) {
+  if (row.profile_image_url) {
+    return <img className="customer-photo" src={row.profile_image_url} alt={row.full_name || 'Customer'} />;
+  }
+  const initial = (row.full_name || '?').slice(0, 1).toUpperCase();
+  return <span className="customer-photo placeholder">{initial}</span>;
+}
 
 export default function CustomersPage() {
   const [customers, setCustomers] = useState(fallbackCustomers);
@@ -31,6 +39,7 @@ export default function CustomersPage() {
   };
 
   const columns = [
+    { key: 'profile_image_url', label: 'Photo', render: row => <CustomerPhoto row={row} /> },
     { key: 'customer_code', label: 'Customer ID' },
     { key: 'full_name', label: 'Name' },
     { key: 'phone', label: 'Phone' },
