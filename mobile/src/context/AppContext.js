@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+﻿import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SERVICES } from '../data/services';
 import { calculatePackageTotals } from '../utils/packageTotals';
@@ -7,13 +7,14 @@ import { registerForPushNotifications } from '../utils/notifications';
 const AppContext = createContext(null);
 
 const defaultCustomer = {
-  id: 'GST-DEMO-0001',
-  customerCode: 'GST-DEMO-0001',
+  id: 'TGSS-DEMO-0001',
+  customerCode: 'TGSS-DEMO-0001',
   fullName: 'Boss',
   phone: '0301 5092782',
   email: 'customer@example.com',
   birthday: '1998-01-01',
-  referralCode: 'GENTSDEMO1',
+  referralCode: 'TGSSDEMO1',
+  profileImageUrl: null,
   stamps: 6,
   points: 600,
   visits: 6,
