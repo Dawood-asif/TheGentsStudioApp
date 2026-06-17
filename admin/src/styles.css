@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --black: #0A0A0A;
   --panel: #151515;
   --panel-2: #1F1A0F;
@@ -74,6 +74,7 @@ button { cursor: pointer; }
   box-shadow: 0 0 34px rgba(212,175,55,.34);
   animation: logo-pulse 2.8s ease-in-out infinite;
 }
+.image-logo { object-fit: cover; background: #000; padding: 3px; }
 h1, h2, h3 { color: var(--gold); margin-top: 0; letter-spacing: .02em; }
 .subtitle, .muted { color: var(--muted); }
 .form-grid { display: grid; gap: 12px; }
@@ -120,6 +121,10 @@ tbody tr:hover { background: rgba(212,175,55,.055); }
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
 .scanner-box { border: 1px solid var(--border); background: #050505; border-radius: 20px; overflow: hidden; aspect-ratio: 16 / 10; max-width: 760px; margin-bottom: 14px; display: grid; place-items: center; box-shadow: 0 0 28px rgba(212,175,55,.12); }
 .scanner-video { width: 100%; height: 100%; object-fit: cover; }
+.customer-photo { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); box-shadow: 0 0 18px rgba(212,175,55,.22); background: #050505; display: inline-grid; place-items: center; color: var(--gold); font-weight: 900; }
+.customer-photo.placeholder { display: inline-grid; place-items: center; background: linear-gradient(145deg, rgba(31,26,15,.96), rgba(10,10,10,.96)); }
+.vip-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 86px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--tier-color, var(--gold)); color: var(--tier-color, var(--gold)); background: rgba(10,10,10,.62); font-weight: 900; font-size: 12px; letter-spacing: .04em; box-shadow: 0 0 16px color-mix(in srgb, var(--tier-color, var(--gold)) 25%, transparent); }
+.vip-badge.diamond { text-shadow: 0 0 8px rgba(125,211,252,.55); }
 @keyframes gold-dust { from { background-position: 0 0, 0 0; } to { background-position: 90px -180px, 260px 0; } }
 @keyframes luxury-scan { 0%,100% { opacity:.22; } 50% { opacity:.42; } }
 @keyframes button-shimmer { 0% { left:-55%; } 48%,100% { left:130%; } }
@@ -130,22 +135,4 @@ tbody tr:hover { background: rgba(212,175,55,.055); }
   .app-shell { grid-template-columns: 1fr; }
   .sidebar { position: static; height: auto; }
   .content { padding: 18px; }
-}
-.customer-photo {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--gold);
-  box-shadow: 0 0 18px rgba(212,175,55,.22);
-  background: #050505;
-  display: inline-grid;
-  place-items: center;
-  color: var(--gold);
-  font-weight: 900;
-}
-.customer-photo.placeholder {
-  display: inline-grid;
-  place-items: center;
-  background: linear-gradient(145deg, rgba(31,26,15,.96), rgba(10,10,10,.96));
 }

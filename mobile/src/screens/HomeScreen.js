@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { BRAND } from '../constants/brand';
@@ -8,9 +8,12 @@ import StampProgress from '../components/StampProgress';
 import QRCard from '../components/QRCard';
 import LuxuryScreen from '../components/LuxuryScreen';
 import AnimatedGoldCard from '../components/AnimatedGoldCard';
+import { getVipProgress } from '../utils/vipTiers';
 
 export default function HomeScreen({ navigation }) {
   const { customer, darkMode, toggleDarkMode } = useApp();
+  const vip = getVipProgress(customer.points);
+
   return (
     <LuxuryScreen contentContainerStyle={styles.content}>
       <Animated.View entering={FadeInDown.duration(520)} style={styles.header}>
@@ -19,8 +22,24 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.name}>{customer.fullName}</Text>
           <Text style={styles.tagline}>Your luxury grooming rewards are waiting.</Text>
         </View>
-        <GoldButton title={darkMode ? '☾' : '☀'} onPress={toggleDarkMode} style={styles.modeButton} />
+        <GoldButton title={darkMode ? 'â˜¾' : 'â˜€'} onPress={toggleDarkMode} style={styles.modeButton} />
       </Animated.View>
+
+      <AnimatedGoldCard delay={70} glow style={styles.vipCard}>
+        <View style={styles.vipHeader}>
+          <View>
+            <Text style={styles.vipLabel}>VIP Status</Text>
+            <Text style={[styles.vipTier, { color: vip.current.color }]}>{vip.current.name}</Text>
+          </View>
+          <Text style={styles.vipPoints}>{customer.points} pts</Text>
+        </View>
+        <View style={styles.vipTrack}>
+          <View style={[styles.vipFill, { width: `${vip.progress}%`, backgroundColor: vip.current.color }]} />
+        </View>
+        <Text style={styles.vipHint}>
+          {vip.next ? `${vip.pointsNeeded} points to ${vip.next.name}` : 'Diamond status unlocked â€” ultimate TGSS VIP.'}
+        </Text>
+      </AnimatedGoldCard>
 
       <StampProgress stamps={customer.stamps} />
 
@@ -57,6 +76,14 @@ const styles = StyleSheet.create({
   name: { color: BRAND.colors.gold, fontSize: 31, fontWeight: '900', letterSpacing: 0.4 },
   tagline: { color: BRAND.colors.white, marginTop: 4, maxWidth: 250 },
   modeButton: { width: 52, paddingHorizontal: 0 },
+  vipCard: { padding: 16, backgroundColor: 'rgba(31,26,15,0.92)' },
+  vipHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  vipLabel: { color: BRAND.colors.muted, fontWeight: '800' },
+  vipTier: { fontSize: 27, fontWeight: '900', marginTop: 2, letterSpacing: 0.7 },
+  vipPoints: { color: BRAND.colors.white, fontWeight: '900' },
+  vipTrack: { height: 10, borderRadius: 999, backgroundColor: '#262626', marginTop: 12, overflow: 'hidden' },
+  vipFill: { height: '100%', borderRadius: 999 },
+  vipHint: { color: BRAND.colors.muted, marginTop: 9, fontWeight: '700' },
   statsRow: { flexDirection: 'row', gap: 10 },
   stat: { flex: 1, alignItems: 'center', padding: 14 },
   statValue: { color: BRAND.colors.gold, fontSize: 22, fontWeight: '900' },

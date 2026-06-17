@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { api } from '../api/client.js';
 import DataTable from '../components/DataTable.jsx';
 import { downloadCsv } from '../utils/csv.js';
+import { getVipTier } from '../utils/vipTiers.js';
 
 const fallbackCustomers = [
-  { id: 'demo-1', customer_code: 'GST-DEMO-0001', full_name: 'Demo Customer', phone: '0301 5092782', email: 'demo@example.com', stamps: 6, points: 600, visits: 6, current_streak: 4, referral_code: 'GENTSDEMO1', profile_image_url: '' },
+  { id: 'demo-1', customer_code: 'TGSS-DEMO-0001', full_name: 'Demo Customer', phone: '0301 5092782', email: 'demo@example.com', stamps: 6, points: 600, visits: 6, current_streak: 4, referral_code: 'TGSSDEMO1', profile_image_url: '' },
 ];
 
 function CustomerPhoto({ row }) {
@@ -13,6 +14,11 @@ function CustomerPhoto({ row }) {
   }
   const initial = (row.full_name || '?').slice(0, 1).toUpperCase();
   return <span className="customer-photo placeholder">{initial}</span>;
+}
+
+function VipBadge({ points }) {
+  const tier = getVipTier(points);
+  return <span className={`vip-badge ${tier.id}`} style={{ '--tier-color': tier.color }}>{tier.name}</span>;
 }
 
 export default function CustomersPage() {
@@ -42,6 +48,7 @@ export default function CustomersPage() {
     { key: 'profile_image_url', label: 'Photo', render: row => <CustomerPhoto row={row} /> },
     { key: 'customer_code', label: 'Customer ID' },
     { key: 'full_name', label: 'Name' },
+    { key: 'vip_tier', label: 'VIP Tier', render: row => <VipBadge points={row.points} /> },
     { key: 'phone', label: 'Phone' },
     { key: 'email', label: 'Email' },
     { key: 'stamps', label: 'Stamps' },
