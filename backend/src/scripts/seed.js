@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+﻿const bcrypt = require('bcryptjs');
 const { pool, query } = require('../config/db');
 const env = require('../config/env');
 const services = require('../data/services');
@@ -43,6 +43,7 @@ async function seedSettings() {
     loyalty: settings.loyalty,
     referral: settings.referral,
     packageBuilder: settings.packageBuilder,
+    vipTiers: settings.vipTiers,
     aiRules: {
       noStaffNames: true,
       bookingByPhoneOnly: true,

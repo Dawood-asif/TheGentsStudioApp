@@ -11,9 +11,9 @@ import { api } from '../api/client';
 import { getAchievements, getVipProgress } from '../utils/vipTiers';
 
 export default function ProfileScreen() {
-  const { customer, setCustomer } = useApp();
+  const { customer, setCustomer, vipTiers } = useApp();
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const vip = getVipProgress(customer.points);
+  const vip = getVipProgress(customer.points, vipTiers);
   const achievements = getAchievements(customer);
   const unlockedCount = achievements.filter(item => item.unlocked).length;
   const shareText = `Join The Gents Studio & Spa with my referral code ${customer.referralCode} and get ${BRAND.referral.friendDiscountPercent}% off your first visit.`;

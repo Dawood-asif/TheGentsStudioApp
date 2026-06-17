@@ -2,7 +2,7 @@
 import { api } from '../api/client.js';
 import DataTable from '../components/DataTable.jsx';
 import { downloadCsv } from '../utils/csv.js';
-import { getVipTier } from '../utils/vipTiers.js';
+import { getVipTier, VIP_TIERS, normalizeTiers } from '../utils/vipTiers.js';
 
 const fallbackCustomers = [
   { id: 'demo-1', customer_code: 'TGSS-DEMO-0001', full_name: 'Demo Customer', phone: '0301 5092782', email: 'demo@example.com', stamps: 6, points: 600, visits: 6, current_streak: 4, referral_code: 'TGSSDEMO1', profile_image_url: '' },
@@ -16,19 +16,25 @@ function CustomerPhoto({ row }) {
   return <span className="customer-photo placeholder">{initial}</span>;
 }
 
-function VipBadge({ points }) {
-  const tier = getVipTier(points);
+function VipBadge({ points, tiers }) {
+  const tier = getVipTier(points, tiers);
   return <span className={`vip-badge ${tier.id}`} style={{ '--tier-color': tier.color }}>{tier.name}</span>;
 }
 
 export default function CustomersPage() {
   const [customers, setCustomers] = useState(fallbackCustomers);
+  const [vipTiers, setVipTiers] = useState(VIP_TIERS);
   const [search, setSearch] = useState('');
   const [message, setMessage] = useState('Backend offline: demo row shown until API is connected.');
 
   const load = () => {
-    api.customers(search)
-      .then(result => { setCustomers(result.data); setMessage('Live customers loaded.'); })
+    Promise.all([api.customers(search), api.settings()])
+      .then(([customersResult, settingsResult]) => {
+        setCustomers(customersResult.data);
+        const vipRow = settingsResult.data?.find(item => item.key === 'vipTiers');
+        if (Array.isArray(vipRow?.value)) setVipTiers(normalizeTiers(vipRow.value));
+        setMessage('Live customers loaded.');
+      })
       .catch(() => setMessage('Backend offline: demo row shown until API is connected.'));
   };
 
@@ -48,7 +54,7 @@ export default function CustomersPage() {
     { key: 'profile_image_url', label: 'Photo', render: row => <CustomerPhoto row={row} /> },
     { key: 'customer_code', label: 'Customer ID' },
     { key: 'full_name', label: 'Name' },
-    { key: 'vip_tier', label: 'VIP Tier', render: row => <VipBadge points={row.points} /> },
+    { key: 'vip_tier', label: 'VIP Tier', render: row => <VipBadge points={row.points} tiers={vipTiers} /> },
     { key: 'phone', label: 'Phone' },
     { key: 'email', label: 'Email' },
     { key: 'stamps', label: 'Stamps' },

@@ -1,4 +1,4 @@
-const API_URL = 'http://10.0.2.2:5000';
+﻿const API_URL = 'http://10.0.2.2:5000';
 
 export async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
@@ -14,6 +14,7 @@ export async function apiRequest(path, options = {}) {
 
 export const api = {
   services: () => apiRequest('/api/services'),
+  settings: () => apiRequest('/api/settings'),
   leaderboard: period => apiRequest(`/api/leaderboard?period=${period}`),
   signup: body => apiRequest('/api/customers', { method: 'POST', body }),
   requestOtp: body => apiRequest('/api/otp/send', { method: 'POST', body }),
@@ -21,6 +22,7 @@ export const api = {
   createAppointment: body => apiRequest('/api/appointments', { method: 'POST', body }),
   calendarSlots: date => apiRequest(`/api/calendar/slots?date=${encodeURIComponent(date)}`),
   registerPushToken: body => apiRequest('/api/notifications/register-token', { method: 'POST', body }),
+  updateProfileImage: (customerId, imageData) => apiRequest(`/api/customers/${customerId}/profile-image`, { method: 'POST', body: { imageData } }),
   staffAddStamp: (body, staffDeviceKey) => apiRequest('/api/staff-device/stamps/add', { method: 'POST', body, headers: { 'x-staff-device-key': staffDeviceKey } }),
   staffOfflineSync: (body, staffDeviceKey) => apiRequest('/api/staff-device/offline-sync', { method: 'POST', body, headers: { 'x-staff-device-key': staffDeviceKey } }),
 };

@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+﻿const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export function getToken() {
   return localStorage.getItem('gents_admin_access_token');
@@ -43,6 +43,7 @@ export const api = {
   appointments: () => apiRequest('/api/appointments'),
   inventory: () => apiRequest('/api/inventory'),
   settings: () => apiRequest('/api/settings'),
+  updateSetting: (key, value) => apiRequest(`/api/settings/${key}`, { method: 'PUT', body: { value } }),
   addStamp: body => apiRequest('/api/stamps/add', { method: 'POST', body }),
   broadcastNotification: body => apiRequest('/api/notifications/broadcast', { method: 'POST', body }),
 };

@@ -125,6 +125,10 @@ tbody tr:hover { background: rgba(212,175,55,.055); }
 .customer-photo.placeholder { display: inline-grid; place-items: center; background: linear-gradient(145deg, rgba(31,26,15,.96), rgba(10,10,10,.96)); }
 .vip-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 86px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--tier-color, var(--gold)); color: var(--tier-color, var(--gold)); background: rgba(10,10,10,.62); font-weight: 900; font-size: 12px; letter-spacing: .04em; box-shadow: 0 0 16px color-mix(in srgb, var(--tier-color, var(--gold)) 25%, transparent); }
 .vip-badge.diamond { text-shadow: 0 0 8px rgba(125,211,252,.55); }
+.vip-editor { display: grid; gap: 10px; margin: 16px 0; }
+.vip-editor-row { display: grid; grid-template-columns: minmax(120px, 1fr) 140px 130px auto; gap: 10px; align-items: center; }
+.vip-editor-row input { min-width: 0; }
+@media (max-width: 860px) { .vip-editor-row { grid-template-columns: 1fr; } }
 @keyframes gold-dust { from { background-position: 0 0, 0 0; } to { background-position: 90px -180px, 260px 0; } }
 @keyframes luxury-scan { 0%,100% { opacity:.22; } 50% { opacity:.42; } }
 @keyframes button-shimmer { 0% { left:-55%; } 48%,100% { left:130%; } }

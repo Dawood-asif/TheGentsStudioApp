@@ -11,8 +11,8 @@ import AnimatedGoldCard from '../components/AnimatedGoldCard';
 import { getVipProgress } from '../utils/vipTiers';
 
 export default function HomeScreen({ navigation }) {
-  const { customer, darkMode, toggleDarkMode } = useApp();
-  const vip = getVipProgress(customer.points);
+  const { customer, darkMode, toggleDarkMode, vipTiers } = useApp();
+  const vip = getVipProgress(customer.points, vipTiers);
 
   return (
     <LuxuryScreen contentContainerStyle={styles.content}>
