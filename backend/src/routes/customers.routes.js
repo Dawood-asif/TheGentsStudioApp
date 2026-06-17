@@ -64,24 +64,52 @@ router.post('/', validate(signupSchema), asyncHandler(async (req, res) => {
   const { fullName, phone, email, birthday, termsAccepted, referredByCode } = req.body;
   if (!termsAccepted) throw new ApiError(400, 'Terms and Privacy Policy agreement is required');
 
-  const customerCode = generateCustomerCode();
-  const referralCode = generateReferralCode();
   const normalizedPhone = normalizePakistaniPhone(phone);
+  const normalizedEmail = email.toLowerCase();
+
   const verifiedOtp = await query(
     `SELECT id FROM otp_codes
      WHERE phone = $1 AND purpose = 'signup' AND verified_at IS NOT NULL
      ORDER BY verified_at DESC LIMIT 1`,
     [normalizedPhone],
   );
+  if (!verifiedOtp.rowCount) throw new ApiError(401, 'Please verify OTP before creating account');
+
+  // If the same verified phone already exists, treat signup like login and return the existing customer.
+  // This prevents "internal server error" when a customer retries after a previous successful signup.
+  const existingByPhone = await query('SELECT * FROM customers WHERE phone = $1', [normalizedPhone]);
+  if (existingByPhone.rowCount) {
+    const updated = await query(
+      `UPDATE customers
+       SET full_name = COALESCE(NULLIF($1, ''), full_name),
+           email = CASE WHEN email = $2 OR NOT EXISTS (SELECT 1 FROM customers WHERE email = $2 AND phone <> $3) THEN $2 ELSE email END,
+           birthday = COALESCE($4, birthday),
+           terms_accepted = TRUE,
+           otp_verified = TRUE,
+           last_login = NOW()
+       WHERE phone = $3
+       RETURNING *`,
+      [fullName, normalizedEmail, normalizedPhone, birthday],
+    );
+    return res.json({ success: true, data: updated.rows[0], message: 'Existing verified account loaded.' });
+  }
+
+  const existingByEmail = await query('SELECT id FROM customers WHERE email = $1', [normalizedEmail]);
+  if (existingByEmail.rowCount) {
+    throw new ApiError(409, 'Email already exists. Use a different email or ask admin to update your profile.');
+  }
+
+  const customerCode = generateCustomerCode();
+  const referralCode = generateReferralCode();
 
   const result = await query(
-    `INSERT INTO customers (customer_code, full_name, phone, email, birthday, terms_accepted, otp_verified, referral_code, referred_by_code)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+    `INSERT INTO customers (customer_code, full_name, phone, email, birthday, terms_accepted, otp_verified, referral_code, referred_by_code, last_login)
+     VALUES ($1,$2,$3,$4,$5,$6,TRUE,$7,$8,NOW())
      RETURNING *`,
-    [customerCode, fullName, normalizedPhone, email.toLowerCase(), birthday, termsAccepted, verifiedOtp.rowCount > 0, referralCode, referredByCode || null],
+    [customerCode, fullName, normalizedPhone, normalizedEmail, birthday, termsAccepted, referralCode, referredByCode || null],
   );
 
-  res.status(201).json({ success: true, data: result.rows[0], message: 'Customer created. OTP provider can now send verification code.' });
+  res.status(201).json({ success: true, data: result.rows[0], message: 'Customer created successfully.' });
 }));
 
 router.put('/:id', requireAdmin, asyncHandler(async (req, res) => {
