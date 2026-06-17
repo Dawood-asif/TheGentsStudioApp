@@ -58,7 +58,7 @@ async function sendViaWhatsAppCloud(phone, message) {
 
 async function createAndSendOtp({ phone, purpose = 'signup' }) {
   const normalizedPhone = normalizePakistaniPhone(phone);
-  const otp = generateOtp();
+  const otp = env.otpProvider === 'demo' ? '123456' : generateOtp();
   const expiresAt = new Date(Date.now() + env.otpExpiryMinutes * 60 * 1000);
   const message = `The Gents Studio & Spa verification code is ${otp}. It expires in ${env.otpExpiryMinutes} minutes.`;
 
@@ -79,7 +79,7 @@ async function createAndSendOtp({ phone, purpose = 'signup' }) {
     phone: normalizedPhone,
     expiresAt,
     provider: env.otpProvider,
-    demoCode: env.nodeEnv !== 'production' && env.otpProvider === 'demo' ? otp : undefined,
+    demoCode: env.otpProvider === 'demo' ? otp : undefined,
     providerResponse,
   };
 }
