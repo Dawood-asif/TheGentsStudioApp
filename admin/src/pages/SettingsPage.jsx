@@ -1,12 +1,21 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { api } from '../api/client.js';
 import DataTable from '../components/DataTable.jsx';
 import { VIP_TIERS, normalizeTiers } from '../utils/vipTiers.js';
 
+const DEFAULT_BIRTHDAY_REWARD = {
+  enabled: true,
+  title: 'Birthday Royal Surprise',
+  message: 'Happy Birthday, Boss! Enjoy 20% off your birthday visit at The Gents Studio & Spa.',
+  discountPercent: 20,
+  validDays: 7,
+};
+
 const fallbackSettings = [
-  { key: 'business', value: { appName: 'The Gents Studio & Spa', operatingHours: '8:00 AM â€“ 9:00 PM', phones: ['0301 5092782', '0335 2279567'] } },
+  { key: 'business', value: { appName: 'The Gents Studio & Spa', operatingHours: '8:00 AM – 9:00 PM', phones: ['0301 5092782', '0335 2279567'] } },
   { key: 'loyalty', value: { stampsNeeded: 10, pointsPerStamp: 100, rewardType: 'FREE_SERVICE' } },
   { key: 'vipTiers', value: VIP_TIERS },
+  { key: 'birthdayReward', value: DEFAULT_BIRTHDAY_REWARD },
   { key: 'referral', value: { referrerStamps: 2, referrerPoints: 200, friendDiscountPercent: 20 } },
   { key: 'packageBuilder', value: { minimumServicesForDiscount: 2, discountPercent: 20 } },
 ];
@@ -14,6 +23,7 @@ const fallbackSettings = [
 export default function SettingsPage() {
   const [settings, setSettings] = useState(fallbackSettings);
   const [vipTiers, setVipTiers] = useState(VIP_TIERS);
+  const [birthdayReward, setBirthdayReward] = useState(DEFAULT_BIRTHDAY_REWARD);
   const [message, setMessage] = useState('Fallback settings shown. Connect backend for live editable settings.');
 
   const load = () => {
@@ -22,6 +32,8 @@ export default function SettingsPage() {
         setSettings(result.data);
         const vipRow = result.data.find(item => item.key === 'vipTiers');
         if (Array.isArray(vipRow?.value)) setVipTiers(normalizeTiers(vipRow.value));
+        const birthdayRow = result.data.find(item => item.key === 'birthdayReward');
+        if (birthdayRow?.value) setBirthdayReward({ ...DEFAULT_BIRTHDAY_REWARD, ...birthdayRow.value });
         setMessage('Live settings loaded.');
       })
       .catch(() => setMessage('Backend offline: fallback settings shown.'));
@@ -33,6 +45,17 @@ export default function SettingsPage() {
     setVipTiers(current => current.map((tier, tierIndex) => (
       tierIndex === index ? { ...tier, [key]: key === 'minPoints' ? Number(value || 0) : value } : tier
     )));
+  };
+
+  const updateBirthdayReward = (key, value) => {
+    setBirthdayReward(current => ({
+      ...current,
+      [key]: key === 'enabled'
+        ? Boolean(value)
+        : ['discountPercent', 'validDays'].includes(key)
+          ? Number(value || 0)
+          : value,
+    }));
   };
 
   const saveVipTiers = async () => {
@@ -50,6 +73,16 @@ export default function SettingsPage() {
     try {
       await api.updateSetting('vipTiers', sorted);
       setMessage('VIP tiers saved. Mobile app will use new tier ranges after opening/restarting.');
+      load();
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const saveBirthdayReward = async () => {
+    try {
+      await api.updateSetting('birthdayReward', birthdayReward);
+      setMessage('Birthday reward saved. Mobile app will show the updated birthday surprise.');
       load();
     } catch (error) {
       setMessage(error.message);
@@ -74,7 +107,7 @@ export default function SettingsPage() {
               <input value={tier.name} onChange={event => updateTier(index, 'name', event.target.value)} placeholder="Tier name" />
               <input type="number" min="0" step="100" value={tier.minPoints} onChange={event => updateTier(index, 'minPoints', event.target.value)} placeholder="Min points" />
               <input value={tier.color} onChange={event => updateTier(index, 'color', event.target.value)} placeholder="#D4AF37" />
-              <span className="vip-badge" style={{ '--tier-color': tier.color }}>{tier.name || 'Tier'} â€¢ {tier.minPoints} pts</span>
+              <span className="vip-badge" style={{ '--tier-color': tier.color }}>{tier.name || 'Tier'} • {tier.minPoints} pts</span>
             </div>
           ))}
         </div>
@@ -83,6 +116,22 @@ export default function SettingsPage() {
           <button className="btn secondary" onClick={resetVipTiers}>Reset Recommended Ranges</button>
         </div>
         <p className="muted">Recommended: Member 0, Bronze 1500, Silver 3000, Gold 5000, Platinum 8000, Diamond 12000.</p>
+      </section>
+
+      <section className="card">
+        <h2>Birthday Surprise Reward</h2>
+        <p className="muted">This appears in the mobile app on the customer birthday and as a countdown before birthday.</p>
+        <div className="form-grid">
+          <label className="setting-check">
+            <input type="checkbox" checked={birthdayReward.enabled} onChange={event => updateBirthdayReward('enabled', event.target.checked)} />
+            <span>Enable birthday reward</span>
+          </label>
+          <input value={birthdayReward.title} onChange={event => updateBirthdayReward('title', event.target.value)} placeholder="Reward title" />
+          <textarea value={birthdayReward.message} onChange={event => updateBirthdayReward('message', event.target.value)} placeholder="Birthday message" rows="4" />
+          <input type="number" min="0" value={birthdayReward.discountPercent} onChange={event => updateBirthdayReward('discountPercent', event.target.value)} placeholder="Discount percent" />
+          <input type="number" min="1" value={birthdayReward.validDays} onChange={event => updateBirthdayReward('validDays', event.target.value)} placeholder="Valid days" />
+          <button className="btn" onClick={saveBirthdayReward}>Save Birthday Reward</button>
+        </div>
       </section>
 
       <section className="card">
