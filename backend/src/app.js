@@ -22,6 +22,7 @@ const otpRoutes = require('./routes/otp.routes');
 const notificationRoutes = require('./routes/notifications.routes');
 const staffDeviceRoutes = require('./routes/staffDevice.routes');
 const calendarRoutes = require('./routes/calendar.routes');
+const reviewRoutes = require('./routes/reviews.routes');
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use('/api/otp', otpRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/staff-device', staffDeviceRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
