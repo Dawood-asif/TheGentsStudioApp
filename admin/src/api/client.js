@@ -48,4 +48,7 @@ updateInventoryItem: (id, body) => apiRequest(`/api/inventory/${id}`, { method: 
   updateSetting: (key, value) => apiRequest(`/api/settings/${key}`, { method: 'PUT', body: { value } }),
   addStamp: body => apiRequest('/api/stamps/add', { method: 'POST', body }),
   broadcastNotification: body => apiRequest('/api/notifications/broadcast', { method: 'POST', body }),
+  adminReviews: () => apiRequest('/api/reviews/admin/all'),
+approveReview: id => apiRequest(`/api/reviews/admin/${id}/approve`, { method: 'PUT' }),
+rejectReview: id => apiRequest(`/api/reviews/admin/${id}/reject`, { method: 'PUT' }),
 };
