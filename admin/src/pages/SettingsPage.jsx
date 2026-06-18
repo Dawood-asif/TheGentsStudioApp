@@ -10,12 +10,53 @@ const DEFAULT_BIRTHDAY_REWARD = {
   discountPercent: 20,
   validDays: 7,
 };
-
+const DEFAULT_ACHIEVEMENT_REWARDS = [
+  {
+    id: 'first-visit',
+    title: 'First Visit',
+    description: 'Complete your first TGSS visit',
+    reward: '+50 points',
+    rewardType: 'points',
+    rewardValue: 50,
+  },
+  {
+    id: 'stamp-starter',
+    title: 'Stamp Starter',
+    description: 'Collect 3 loyalty stamps',
+    reward: '+1 bonus stamp',
+    rewardType: 'stamps',
+    rewardValue: 1,
+  },
+  {
+    id: 'bronze-path',
+    title: 'Bronze Path',
+    description: 'Reach Bronze VIP status',
+    reward: 'Bronze member badge',
+    rewardType: 'badge',
+    rewardValue: 0,
+  },
+  {
+    id: 'streak-king',
+    title: 'Streak King',
+    description: 'Keep a 4-week grooming streak',
+    reward: '+100 points',
+    rewardType: 'points',
+    rewardValue: 100,
+  },
+  {
+    id: 'mystery-gift',
+    title: 'Mystery Gift',
+    description: 'Unlock surprise rewards during special events',
+    reward: 'Random gift',
+    rewardType: 'custom',
+    rewardValue: 0,
+  },
+];
 const fallbackSettings = [
   { key: 'business', value: { appName: 'The Gents Studio & Spa', operatingHours: '8:00 AM – 9:00 PM', phones: ['0301 5092782', '0335 2279567'] } },
   { key: 'loyalty', value: { stampsNeeded: 10, pointsPerStamp: 100, rewardType: 'FREE_SERVICE' } },
   { key: 'vipTiers', value: VIP_TIERS },
-  { key: 'birthdayReward', value: DEFAULT_BIRTHDAY_REWARD },
+  { key: 'birthdayReward', value: DEFAULT_BIRTHDAY_REWARD }, { key: 'achievementRewards', value: DEFAULT_ACHIEVEMENT_REWARDS },
   { key: 'referral', value: { referrerStamps: 2, referrerPoints: 200, friendDiscountPercent: 20 } },
   { key: 'packageBuilder', value: { minimumServicesForDiscount: 2, discountPercent: 20 } },
 ];
