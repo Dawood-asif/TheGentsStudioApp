@@ -35,6 +35,7 @@ export async function apiRequest(path, options = {}) {
 
 export const api = {
   login: body => apiRequest('/api/auth/login', { method: 'POST', body }),
+  updateCustomer: (id, body) => apiRequest(`/api/customers/${id}`, { method: 'PUT', body }),
   logout: body => apiRequest('/api/auth/logout', { method: 'POST', body }),
   dashboard: () => apiRequest('/api/reports/dashboard'),
   customers: search => apiRequest(`/api/customers${search ? `?search=${encodeURIComponent(search)}` : ''}`),
