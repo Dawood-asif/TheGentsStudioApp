@@ -199,6 +199,60 @@ const resetAchievementRewards = () => setAchievementRewards(DEFAULT_ACHIEVEMENT_
         </div>
       </section>
 
+            <section className="card">
+        <h2>Achievement Rewards</h2>
+        <p className="muted">Edit reward titles, descriptions, reward types, and values for gamification badges and mystery gifts.</p>
+
+        <div className="achievement-editor">
+          {achievementRewards.map((reward, index) => (
+            <div className="achievement-editor-row" key={reward.id || index}>
+              <input
+                value={reward.title}
+                onChange={event => updateAchievementReward(index, 'title', event.target.value)}
+                placeholder="Achievement title"
+              />
+
+              <input
+                value={reward.description}
+                onChange={event => updateAchievementReward(index, 'description', event.target.value)}
+                placeholder="Description"
+              />
+
+              <input
+                value={reward.reward}
+                onChange={event => updateAchievementReward(index, 'reward', event.target.value)}
+                placeholder="Reward text"
+              />
+
+              <select
+                value={reward.rewardType}
+                onChange={event => updateAchievementReward(index, 'rewardType', event.target.value)}
+              >
+                <option value="points">Points</option>
+                <option value="stamps">Stamps</option>
+                <option value="badge">Badge</option>
+                <option value="discount">Discount</option>
+                <option value="custom">Custom</option>
+              </select>
+
+              <input
+                type="number"
+                value={reward.rewardValue}
+                onChange={event => updateAchievementReward(index, 'rewardValue', event.target.value)}
+                placeholder="Reward value"
+              />
+
+              <span className="badge">{reward.reward}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="toolbar">
+          <button className="btn" onClick={saveAchievementRewards}>Save Achievement Rewards</button>
+          <button className="btn secondary" onClick={resetAchievementRewards}>Reset Rewards</button>
+        </div>
+      </section>
+      
       <section className="card">
         <div className="toolbar">
           <button className="btn secondary" onClick={load}>Refresh Settings</button>
