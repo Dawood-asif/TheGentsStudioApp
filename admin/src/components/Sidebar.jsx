@@ -1,6 +1,6 @@
 import React from 'react';
 
-const navItems = ['Dashboard', 'Customers', 'Services', 'Staff', 'Appointments', 'Inventory', 'QR Scanner', 'Notifications', 'Settings'];
+const navItems = ['Dashboard', 'Customers', 'Services', 'Staff', 'Appointments', 'Inventory', 'QR Scanner', 'Notifications', 'About Us', 'Settings'];
 
 export default function Sidebar({ activePage, setActivePage, onLogout }) {
   return (
