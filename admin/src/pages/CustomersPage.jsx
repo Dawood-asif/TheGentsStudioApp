@@ -48,6 +48,39 @@ export default function CustomersPage() {
     } catch (error) {
       setMessage(error.message);
     }
+    const editNotes = async customer => {
+  const currentNotes = customer.customer_notes || '';
+  const notes = window.prompt(`Notes for ${customer.full_name}`, currentNotes);
+
+  if (notes === null) return;
+
+  const currentPreferences = customer.preferences || {};
+  const preferencesText = window.prompt(
+    'Preferences JSON (example: {"haircut":"low fade","skin":"sensitive"})',
+    JSON.stringify(currentPreferences, null, 2)
+  );
+
+  if (preferencesText === null) return;
+
+  let preferences = {};
+  try {
+    preferences = JSON.parse(preferencesText || '{}');
+  } catch (error) {
+    setMessage('Invalid preferences JSON.');
+    return;
+  }
+
+  try {
+    await api.updateCustomer(customer.id, {
+      customer_notes: notes,
+      preferences,
+    });
+    setMessage(`Notes updated for ${customer.full_name}.`);
+    load();
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
   };
 
   const columns = [
