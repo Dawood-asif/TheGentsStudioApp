@@ -1,3 +1,4 @@
+import ReviewsPage from './pages/ReviewsPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
 import React, { useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar.jsx';
@@ -15,6 +16,7 @@ import { clearSession, getToken } from './api/client.js';
 
 const pages = {
   Dashboard: DashboardPage,
+  Reviews: ReviewsPage,
   Customers: CustomersPage,
   Services: ServicesPage,
   Staff: StaffPage,
