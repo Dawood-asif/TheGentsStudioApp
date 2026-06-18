@@ -42,8 +42,12 @@ async function seedSettings() {
     brand: settings.brand,
     loyalty: settings.loyalty,
     referral: settings.referral,
-    packageBuilder: settings.packageBuilder,
+        packageBuilder: settings.packageBuilder,
+
     vipTiers: settings.vipTiers,
+
+    achievementRewards: settings.achievementRewards,
+
     aiRules: {
       noStaffNames: true,
       bookingByPhoneOnly: true,
