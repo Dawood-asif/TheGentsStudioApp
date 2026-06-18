@@ -9,7 +9,7 @@
   loyalty: { stampsNeeded: 10, pointsPerStamp: 100, antiCheatOneStampPerDay: true, rewardType: 'FREE_SERVICE', stampExpiryDays: null },
   referral: { referrerStamps: 2, referrerPoints: 200, friendDiscountPercent: 20 },
   packageBuilder: { minimumServicesForDiscount: 2, discountPercent: 20 },
-  vipTiers: [
+    vipTiers: [
     { id: 'member', name: 'Member', minPoints: 0, color: '#A9A9A9' },
     { id: 'bronze', name: 'Bronze', minPoints: 1500, color: '#B87333' },
     { id: 'silver', name: 'Silver', minPoints: 3000, color: '#C0C0C0' },
@@ -17,5 +17,49 @@
     { id: 'platinum', name: 'Platinum', minPoints: 8000, color: '#E5E4E2' },
     { id: 'diamond', name: 'Diamond', minPoints: 12000, color: '#7DD3FC' },
   ],
+
+  achievementRewards: [
+    {
+      id: 'first-visit',
+      title: 'First Visit',
+      description: 'Complete your first TGSS visit',
+      reward: '+50 points',
+      rewardType: 'points',
+      rewardValue: 50,
+    },
+    {
+      id: 'stamp-starter',
+      title: 'Stamp Starter',
+      description: 'Collect 3 loyalty stamps',
+      reward: '+1 bonus stamp',
+      rewardType: 'stamps',
+      rewardValue: 1,
+    },
+    {
+      id: 'bronze-path',
+      title: 'Bronze Path',
+      description: 'Reach Bronze VIP status',
+      reward: 'Bronze member badge',
+      rewardType: 'badge',
+      rewardValue: 0,
+    },
+    {
+      id: 'streak-king',
+      title: 'Streak King',
+      description: 'Keep a 4-week grooming streak',
+      reward: '+100 points',
+      rewardType: 'points',
+      rewardValue: 100,
+    },
+    {
+      id: 'mystery-gift',
+      title: 'Mystery Gift',
+      description: 'Unlock surprise rewards during special events',
+      reward: 'Random gift',
+      rewardType: 'custom',
+      rewardValue: 0,
+    },
+  ],
+
   calendar: { enabled: true, slotMinutes: 30, startHour: 8, endHour: 21, finalConfirmationByPhone: true },
 };
