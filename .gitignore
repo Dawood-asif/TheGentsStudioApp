@@ -31,3 +31,4 @@ ios/build/
 *.pem
 .git-credentials
 .netrc
+.vercel/
