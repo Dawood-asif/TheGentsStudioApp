@@ -62,10 +62,11 @@ const fallbackSettings = [
 ];
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState(fallbackSettings);
-  const [vipTiers, setVipTiers] = useState(VIP_TIERS);
-  const [birthdayReward, setBirthdayReward] = useState(DEFAULT_BIRTHDAY_REWARD);
-  const [message, setMessage] = useState('Fallback settings shown. Connect backend for live editable settings.');
+const [settings, setSettings] = useState(fallbackSettings);
+const [vipTiers, setVipTiers] = useState(VIP_TIERS);
+const [birthdayReward, setBirthdayReward] = useState(DEFAULT_BIRTHDAY_REWARD);
+const [achievementRewards, setAchievementRewards] = useState(DEFAULT_ACHIEVEMENT_REWARDS);
+const [message, setMessage] = useState('Fallback settings shown. Connect backend for live editable settings.');
 
   const load = () => {
     api.settings()
@@ -74,6 +75,8 @@ export default function SettingsPage() {
         const vipRow = result.data.find(item => item.key === 'vipTiers');
         if (Array.isArray(vipRow?.value)) setVipTiers(normalizeTiers(vipRow.value));
         const birthdayRow = result.data.find(item => item.key === 'birthdayReward');
+        const achievementRow = result.data.find(item => item.key === 'achievementRewards');
+if (Array.isArray(achievementRow?.value)) setAchievementRewards(achievementRow.value);
         if (birthdayRow?.value) setBirthdayReward({ ...DEFAULT_BIRTHDAY_REWARD, ...birthdayRow.value });
         setMessage('Live settings loaded.');
       })
