@@ -1,3 +1,4 @@
+import AboutUsPage from './pages/AboutUsPage.jsx';
 import React, { useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import LoginPage from './pages/LoginPage.jsx';
@@ -21,6 +22,7 @@ const pages = {
   Inventory: InventoryPage,
   'QR Scanner': QRScannerPage,
   Notifications: NotificationsPage,
+  'About Us': AboutUsPage,
   Settings: SettingsPage,
 };
 
