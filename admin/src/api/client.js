@@ -1,4 +1,4 @@
-﻿const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+﻿const API_URL = 'https://the-gents-studio-app-api.vercel.app';
 
 export function getToken() {
   return localStorage.getItem('gents_admin_access_token');
