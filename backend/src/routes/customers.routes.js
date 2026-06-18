@@ -8,7 +8,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/apiError');
 const { generateCustomerCode, generateReferralCode } = require('../utils/customerIds');
 const { normalizePakistaniPhone } = require('../utils/phone');
-
+const { verifyOtp } = require('../services/otpService');
 const router = express.Router();
 
 const signupSchema = z.object({
@@ -38,7 +38,26 @@ router.get('/', requireAdmin, asyncHandler(async (req, res) => {
   );
   res.json({ success: true, data: result.rows });
 }));
+router.post('/login', validate(z.object({
+  body: z.object({
+    phone: z.string().min(8),
+    code: z.string().length(6),
+  }),
+})), asyncHandler(async (req, res) => {
+  const { phone, code } = req.body;
+  const normalizedPhone = normalizePakistaniPhone(phone);
 
+  await verifyOtp({ phone: normalizedPhone, code, purpose: 'login' });
+
+  const result = await query(
+    'UPDATE customers SET last_login = NOW(), otp_verified = TRUE WHERE phone = $1 RETURNING *',
+    [normalizedPhone],
+  );
+
+  if (!result.rowCount) throw new ApiError(404, 'Account not found. Please signup first.');
+
+  res.json({ success: true, data: result.rows[0], message: 'Customer logged in successfully.' });
+}));
 router.get('/:id', requireAdmin, asyncHandler(async (req, res) => {
   const customer = await query('SELECT * FROM customers WHERE id = $1', [req.params.id]);
   if (!customer.rowCount) throw new ApiError(404, 'Customer not found');
