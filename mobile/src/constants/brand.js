@@ -7,6 +7,6 @@ export const BRAND = {
   operatingHours: '8:00 AM – 9:00 PM',
   holidaysClosed: ['9th Muharram', '10th Muharram'],
   loyalty: { stampsNeeded: 10, pointsPerStamp: 100, rewardType: 'Free Service' },
-  referral: { referrerStamps: 2, referrerPoints: 200, friendDiscountPercent: 20 },
-  packageBuilder: { minimumServicesForDiscount: 2, discountPercent: 20 },
+  referral: { referrerStamps: 2, referrerPoints: 200, friendDiscountPercent: 10 },
+  packageBuilder: { minimumServicesForDiscount: 4, discountPercent: 10 },
 };
