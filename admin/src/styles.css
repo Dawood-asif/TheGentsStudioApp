@@ -436,3 +436,65 @@ tbody tr:hover { background: rgba(212,175,55,.055); }
     grid-template-columns: 1fr;
   }
 }
+.about-person-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.about-photo-box {
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 14px;
+  background: rgba(10,10,10,.45);
+  display: grid;
+  gap: 12px;
+  place-items: center;
+}
+
+.about-photo-box img {
+  width: 190px;
+  height: 190px;
+  border-radius: 22px;
+  object-fit: cover;
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 24px rgba(212,175,55,.18);
+}
+
+.about-photo-box span {
+  color: var(--muted);
+  min-height: 190px;
+  display: grid;
+  place-items: center;
+}
+
+.salon-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.salon-photo-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 10px;
+  background: rgba(10,10,10,.42);
+  display: grid;
+  gap: 10px;
+}
+
+.salon-photo-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 860px) {
+  .about-person-grid {
+    grid-template-columns: 1fr;
+  }
+}
