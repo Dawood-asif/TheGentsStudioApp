@@ -11,15 +11,84 @@ const seedInventory = [
 function stockStatus(item) {
   const quantity = Number(item.quantity || 0);
   const reorder = Number(item.reorder_level || 0);
+
   if (quantity <= 0) return { label: 'Out of Stock', className: 'danger' };
   if (quantity <= reorder) return { label: 'Low Stock', className: 'warning' };
   if (quantity <= reorder * 1.5) return { label: 'Watch', className: 'watch' };
+
   return { label: 'OK', className: 'ok' };
 }
 
 export default function InventoryPage() {
   const [items, setItems] = useState(seedInventory);
-  const [message, setMessage] = useState('Inventory management scaffold for 0).toLocaleString()} {item.unit} left</span>
+  const [message, setMessage] = useState('Inventory management for shampoo, colors, supplies, razors, and towels.');
+
+  useEffect(() => {
+    api.inventory()
+      .then(result => {
+        setItems(result.data);
+        setMessage('Live inventory loaded.');
+      })
+      .catch(() => setMessage('Backend offline: seed inventory shown.'));
+  }, []);
+
+  const summary = useMemo(() => {
+    const total = items.length;
+    const low = items.filter(item => stockStatus(item).className === 'warning').length;
+    const out = items.filter(item => stockStatus(item).className === 'danger').length;
+    const watch = items.filter(item => stockStatus(item).className === 'watch').length;
+
+    return { total, low, out, watch };
+  }, [items]);
+
+  const lowStockItems = items.filter(item => ['warning', 'danger'].includes(stockStatus(item).className));
+
+  const columns = [
+    { key: 'item_name', label: 'Item' },
+    { key: 'category', label: 'Category' },
+    { key: 'quantity', label: 'Quantity', render: row => `${Number(row.quantity || 0).toLocaleString()} ${row.unit}` },
+    { key: 'reorder_level', label: 'Reorder Level' },
+    {
+      key: 'active',
+      label: 'Status',
+      render: row => {
+        const status = stockStatus(row);
+        return <span className={`stock-badge ${status.className}`}>{status.label}</span>;
+      },
+    },
+  ];
+
+  return (
+    <div className="grid">
+      <section className="card inventory-hero">
+        <div>
+          <h2>Inventory Command Center</h2>
+          <p className="muted">Track products, colors, supplies, razors, towels, and low-stock risk before it affects customers.</p>
+        </div>
+        <span className="badge">Live Stock Intelligence</span>
+      </section>
+
+      <div className="grid cards">
+        <div className="metric"><span className="muted">Total Items</span><strong>{summary.total}</strong></div>
+        <div className="metric"><span className="muted">Low Stock</span><strong>{summary.low}</strong></div>
+        <div className="metric"><span className="muted">Out of Stock</span><strong>{summary.out}</strong></div>
+        <div className="metric"><span className="muted">Watch Items</span><strong>{summary.watch}</strong></div>
+      </div>
+
+      <section className="card">
+        <h2>Low Stock Alerts</h2>
+
+        {!lowStockItems.length && <p className="muted">No urgent stock alerts. Everything looks healthy.</p>}
+
+        <div className="inventory-alert-list">
+          {lowStockItems.map(item => {
+            const status = stockStatus(item);
+
+            return (
+              <div className={`inventory-alert ${status.className}`} key={item.id || item.item_name}>
+                <div>
+                  <strong>{item.item_name}</strong>
+                  <span>{item.category || 'General'} | {Number(item.quantity || 0).toLocaleString()} {item.unit} left</span>
                 </div>
                 <span className={`stock-badge ${status.className}`}>{status.label}</span>
               </div>
