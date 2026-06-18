@@ -300,3 +300,30 @@ tbody tr:hover { background: rgba(212,175,55,.055); }
     grid-template-columns: 1fr;
   }
 }
+.achievement-editor {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.achievement-editor-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr 130px 120px auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px;
+  background: rgba(10,10,10,.42);
+}
+
+.achievement-editor-row input,
+.achievement-editor-row select {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .achievement-editor-row {
+    grid-template-columns: 1fr;
+  }
+}
