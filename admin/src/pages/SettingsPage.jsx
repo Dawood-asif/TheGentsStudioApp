@@ -101,7 +101,28 @@ if (Array.isArray(achievementRow?.value)) setAchievementRewards(achievementRow.v
           : value,
     }));
   };
+const updateAchievementReward = (index, key, value) => {
+  setAchievementRewards(current => current.map((reward, rewardIndex) => (
+    rewardIndex === index
+      ? {
+          ...reward,
+          [key]: key === 'rewardValue' ? Number(value || 0) : value,
+        }
+      : reward
+  )));
+};
 
+const saveAchievementRewards = async () => {
+  try {
+    await api.updateSetting('achievementRewards', achievementRewards);
+    setMessage('Achievement rewards saved. Mobile app will use updated rewards after opening/restarting.');
+    load();
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
+
+const resetAchievementRewards = () => setAchievementRewards(DEFAULT_ACHIEVEMENT_REWARDS);
   const saveVipTiers = async () => {
     const sorted = normalizeTiers(vipTiers);
     if (sorted[0]?.minPoints !== 0) {
