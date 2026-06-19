@@ -25,7 +25,7 @@ router.post('/', requireAdmin, validate(z.object({
 })), asyncHandler(async (req, res) => {
   const { name, specialty, rating = 5, phone = null, commissionPercentage = 0, active = true } = req.body;
   const result = await query(
-    'INSERT INTO staff (name, specialty, rating, phone, commission_percentage, active) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+    INSERT INTO staff (name, specialty, rating, phone, commission_percentage, active, photo_url)
     [name, specialty, rating, phone, commissionPercentage, active],
   );
   res.status(201).json({ success: true, data: result.rows[0] });
