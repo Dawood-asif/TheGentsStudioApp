@@ -513,3 +513,14 @@ tbody tr:hover { background: rgba(212,175,55,.055); }
   border: 1px solid var(--gold);
   box-shadow: 0 0 18px rgba(212,175,55,.18);
 }
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 230px;
+}
+
+.action-buttons .btn {
+  padding: 8px 10px;
+  font-size: 12px;
+}
