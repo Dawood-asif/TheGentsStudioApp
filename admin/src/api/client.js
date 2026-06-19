@@ -52,6 +52,8 @@ createService: body => apiRequest('/api/services', { method: 'POST', body }),
 updateService: (id, body) => apiRequest(`/api/services/${id}`, { method: 'PUT', body }),
 deleteService: id => apiRequest(`/api/services/${id}`, { method: 'DELETE' }),
   staff: () => apiRequest('/api/staff'),
+createStaff: body => apiRequest('/api/staff', { method: 'POST', body }),
+updateStaff: (id, body) => apiRequest(`/api/staff/${id}`, { method: 'PUT', body }),
   appointments: () => apiRequest('/api/appointments'),
 
   inventory: () => apiRequest('/api/inventory'),
