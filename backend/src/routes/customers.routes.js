@@ -151,7 +151,7 @@ router.post('/:id/profile-image', validate(z.object({
 }));
 
 router.put('/:id', requireAdmin, asyncHandler(async (req, res) => {
-  const allowed = ['full_name','phone','email','birthday','stamps','points','visits','current_streak','longest_streak','vip','otp_verified','profile_image_url','customer_notes','preferences'];
+  const allowed = ['full_name','phone','email','birthday','stamps','points','visits','current_streak','longest_streak','vip','otp_verified','profile_image_url','customer_notes','preferences','vip_tier_override'];
   const entries = Object.entries(req.body).filter(([key]) => allowed.includes(key));
   if (!entries.length) throw new ApiError(400, 'No allowed fields provided');
 
