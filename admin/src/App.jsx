@@ -1,6 +1,3 @@
-import AboutUsPage from './pages/AboutUsPage.jsx';
-import ReviewsPage from './pages/ReviewsPage.jsx';
-import AboutUsPage from './pages/AboutUsPage.jsx';
 import React, { useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import LoginPage from './pages/LoginPage.jsx';
@@ -12,20 +9,22 @@ import AppointmentsPage from './pages/AppointmentsPage.jsx';
 import InventoryPage from './pages/InventoryPage.jsx';
 import QRScannerPage from './pages/QRScannerPage.jsx';
 import NotificationsPage from './pages/NotificationsPage.jsx';
+import ReviewsPage from './pages/ReviewsPage.jsx';
+import AboutUsPage from './pages/AboutUsPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import { clearSession, getToken } from './api/client.js';
 
 const pages = {
   Dashboard: DashboardPage,
-  Reviews: ReviewsPage,
   Customers: CustomersPage,
   Services: ServicesPage,
   Staff: StaffPage,
   Appointments: AppointmentsPage,
   Inventory: InventoryPage,
-  QR_Scanner: QRScannerPage,
+  'QR Scanner': QRScannerPage,
   Notifications: NotificationsPage,
-  About_Us: AboutUsPage,
+  Reviews: ReviewsPage,
+  'About Us': AboutUsPage,
   Settings: SettingsPage,
 };
 
