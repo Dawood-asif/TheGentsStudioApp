@@ -48,6 +48,9 @@ export const api = {
   updateCustomer: (id, body) => apiRequest(`/api/customers/${id}`, { method: 'PUT', body }),
 
   services: () => apiRequest('/api/services'),
+createService: body => apiRequest('/api/services', { method: 'POST', body }),
+updateService: (id, body) => apiRequest(`/api/services/${id}`, { method: 'PUT', body }),
+deleteService: id => apiRequest(`/api/services/${id}`, { method: 'DELETE' }),
   staff: () => apiRequest('/api/staff'),
   appointments: () => apiRequest('/api/appointments'),
 
