@@ -1,3 +1,4 @@
+import AboutUsPage from './pages/AboutUsPage.jsx';
 import ReviewsPage from './pages/ReviewsPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
 import React, { useMemo, useState } from 'react';
@@ -22,9 +23,9 @@ const pages = {
   Staff: StaffPage,
   Appointments: AppointmentsPage,
   Inventory: InventoryPage,
-  'QR Scanner': QRScannerPage,
+  QR_Scanner: QRScannerPage,
   Notifications: NotificationsPage,
-  'About Us': AboutUsPage,
+  About_Us: AboutUsPage,
   Settings: SettingsPage,
 };
 
