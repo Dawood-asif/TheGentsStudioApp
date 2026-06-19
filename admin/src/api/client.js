@@ -1,4 +1,4 @@
-﻿const API_URL = 'https://the-gents-studio-app-api.vercel.app';
+const API_URL = 'https://the-gents-studio-app-api.vercel.app';
 
 export function getToken() {
   return localStorage.getItem('gents_admin_access_token');
@@ -18,6 +18,7 @@ export function clearSession() {
 
 export async function apiRequest(path, options = {}) {
   const token = getToken();
+
   const response = await fetch(`${API_URL}${path}`, {
     headers: {
       'Content-Type': 'application/json',
@@ -29,27 +30,39 @@ export async function apiRequest(path, options = {}) {
   });
 
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.message || 'Request failed');
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Request failed');
+  }
+
   return data;
 }
 
 export const api = {
   login: body => apiRequest('/api/auth/login', { method: 'POST', body }),
-  updateCustomer: (id, body) => apiRequest(`/api/customers/${id}`, { method: 'PUT', body }),
   logout: body => apiRequest('/api/auth/logout', { method: 'POST', body }),
+
   dashboard: () => apiRequest('/api/reports/dashboard'),
+
   customers: search => apiRequest(`/api/customers${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+  updateCustomer: (id, body) => apiRequest(`/api/customers/${id}`, { method: 'PUT', body }),
+
   services: () => apiRequest('/api/services'),
   staff: () => apiRequest('/api/staff'),
   appointments: () => apiRequest('/api/appointments'),
+
   inventory: () => apiRequest('/api/inventory'),
-createInventoryItem: body => apiRequest('/api/inventory', { method: 'POST', body }),
-updateInventoryItem: (id, body) => apiRequest(`/api/inventory/${id}`, { method: 'PUT', body }),
+  createInventoryItem: body => apiRequest('/api/inventory', { method: 'POST', body }),
+  updateInventoryItem: (id, body) => apiRequest(`/api/inventory/${id}`, { method: 'PUT', body }),
+
   settings: () => apiRequest('/api/settings'),
   updateSetting: (key, value) => apiRequest(`/api/settings/${key}`, { method: 'PUT', body: { value } }),
+
   addStamp: body => apiRequest('/api/stamps/add', { method: 'POST', body }),
+
   broadcastNotification: body => apiRequest('/api/notifications/broadcast', { method: 'POST', body }),
+
   adminReviews: () => apiRequest('/api/reviews/admin/all'),
-approveReview: id => apiRequest(`/api/reviews/admin/${id}/approve`, { method: 'PUT' }),
-rejectReview: id => apiRequest(`/api/reviews/admin/${id}/reject`, { method: 'PUT' }),
+  approveReview: id => apiRequest(`/api/reviews/admin/${id}/approve`, { method: 'PUT' }),
+  rejectReview: id => apiRequest(`/api/reviews/admin/${id}/reject`, { method: 'PUT' }),
 };
