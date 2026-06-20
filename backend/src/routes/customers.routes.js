@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const express = require('express');
 const { z } = require('zod');
 const QRCode = require('qrcode');
@@ -9,6 +10,7 @@ const ApiError = require('../utils/apiError');
 const { generateCustomerCode, generateReferralCode } = require('../utils/customerIds');
 const { normalizePakistaniPhone } = require('../utils/phone');
 const { verifyOtp } = require('../services/otpService');
+const PIN_SALT_ROUNDS = 10;
 const router = express.Router();
 
 const signupSchema = z.object({
@@ -37,6 +39,54 @@ router.get('/', requireAdmin, asyncHandler(async (req, res) => {
     params,
   );
   res.json({ success: true, data: result.rows });
+}));
+router.post('/set-pin', validate(z.object({
+  body: z.object({
+    phone: z.string().min(8),
+    code: z.string().length(6),
+    pin: z.string().regex(/^\d{4}$/),
+  }),
+})), asyncHandler(async (req, res) => {
+  const { phone, code, pin } = req.body;
+  const normalizedPhone = normalizePakistaniPhone(phone);
+
+  await verifyOtp({ phone: normalizedPhone, code, purpose: 'signup' });
+
+  const pinHash = await bcrypt.hash(pin, PIN_SALT_ROUNDS);
+
+  const result = await query(
+    'UPDATE customers SET pin_hash = $1, pin_set_at = NOW(), otp_verified = TRUE WHERE phone = $2 RETURNING *',
+    [pinHash, normalizedPhone],
+  );
+
+  if (!result.rowCount) throw new ApiError(404, 'Account not found. Please signup first.');
+
+  res.json({ success: true, data: result.rows[0], message: 'PIN created successfully.' });
+}));
+router.post('/pin-login', validate(z.object({
+  body: z.object({
+    phone: z.string().min(8),
+    pin: z.string().regex(/^\d{4}$/),
+  }),
+})), asyncHandler(async (req, res) => {
+  const { phone, pin } = req.body;
+  const normalizedPhone = normalizePakistaniPhone(phone);
+
+  const result = await query('SELECT * FROM customers WHERE phone = $1', [normalizedPhone]);
+  const customer = result.rows[0];
+
+  if (!customer) throw new ApiError(404, 'Account not found. Please signup first.');
+  if (!customer.pin_hash) throw new ApiError(400, 'PIN not set. Please verify OTP once and create PIN.');
+
+  const ok = await bcrypt.compare(pin, customer.pin_hash);
+  if (!ok) throw new ApiError(401, 'Invalid PIN');
+
+  const updated = await query(
+    'UPDATE customers SET last_login = NOW() WHERE id = $1 RETURNING *',
+    [customer.id],
+  );
+
+  res.json({ success: true, data: updated.rows[0], message: 'Customer logged in successfully.' });
 }));
 router.post('/login', validate(z.object({
   body: z.object({
