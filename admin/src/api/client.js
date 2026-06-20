@@ -36,6 +36,7 @@ export async function apiRequest(path, options = {}) {
 }
 
 export const api = {
+  uploadImage: body => apiRequest('/api/media/upload-image', { method: 'POST', body }),
   login: body => apiRequest('/api/auth/login', { method: 'POST', body }),
   logout: body => apiRequest('/api/auth/logout', { method: 'POST', body }),
 
