@@ -10,8 +10,9 @@ const ApiError = require('../utils/apiError');
 const { generateCustomerCode, generateReferralCode } = require('../utils/customerIds');
 const { normalizePakistaniPhone } = require('../utils/phone');
 const { verifyOtp } = require('../services/otpService');
-const PIN_SALT_ROUNDS = 10;
+
 const router = express.Router();
+const PIN_SALT_ROUNDS = 10;
 
 const signupSchema = z.object({
   body: z.object({
@@ -38,8 +39,10 @@ router.get('/', requireAdmin, asyncHandler(async (req, res) => {
     `SELECT * FROM customers ${where} ORDER BY join_date DESC LIMIT 500`,
     params,
   );
+
   res.json({ success: true, data: result.rows });
 }));
+
 router.post('/set-pin', validate(z.object({
   body: z.object({
     phone: z.string().min(8),
@@ -50,7 +53,22 @@ router.post('/set-pin', validate(z.object({
   const { phone, code, pin } = req.body;
   const normalizedPhone = normalizePakistaniPhone(phone);
 
-  await verifyOtp({ phone: normalizedPhone, code, purpose: 'signup' });
+  const otpResult = await query(
+    `SELECT *
+     FROM otp_codes
+     WHERE phone = $1 AND purpose = 'signup'
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [normalizedPhone],
+  );
+
+  const otpRecord = otpResult.rows[0];
+  if (!otpRecord) throw new ApiError(404, 'No OTP request found. Please send OTP again.');
+  if (new Date(otpRecord.expires_at) < new Date()) throw new ApiError(410, 'OTP expired. Please send OTP again.');
+
+  if (!otpRecord.verified_at) {
+    await verifyOtp({ phone: normalizedPhone, code, purpose: 'signup' });
+  }
 
   const pinHash = await bcrypt.hash(pin, PIN_SALT_ROUNDS);
 
@@ -63,6 +81,7 @@ router.post('/set-pin', validate(z.object({
 
   res.json({ success: true, data: result.rows[0], message: 'PIN created successfully.' });
 }));
+
 router.post('/pin-login', validate(z.object({
   body: z.object({
     phone: z.string().min(8),
@@ -88,6 +107,7 @@ router.post('/pin-login', validate(z.object({
 
   res.json({ success: true, data: updated.rows[0], message: 'Customer logged in successfully.' });
 }));
+
 router.post('/login', validate(z.object({
   body: z.object({
     phone: z.string().min(8),
@@ -108,6 +128,7 @@ router.post('/login', validate(z.object({
 
   res.json({ success: true, data: result.rows[0], message: 'Customer logged in successfully.' });
 }));
+
 router.get('/:id', requireAdmin, asyncHandler(async (req, res) => {
   const customer = await query('SELECT * FROM customers WHERE id = $1', [req.params.id]);
   if (!customer.rowCount) throw new ApiError(404, 'Customer not found');
@@ -124,8 +145,18 @@ router.get('/:id/qrcode', requireAdmin, asyncHandler(async (req, res) => {
   const customer = await query('SELECT id, customer_code, full_name FROM customers WHERE id = $1', [req.params.id]);
   if (!customer.rowCount) throw new ApiError(404, 'Customer not found');
 
-  const qrPayload = JSON.stringify({ type: 'GENTS_CUSTOMER', customerId: customer.rows[0].id, customerCode: customer.rows[0].customer_code });
-  const dataUrl = await QRCode.toDataURL(qrPayload, { margin: 1, width: 320, color: { dark: '#0A0A0A', light: '#FFFFFF' } });
+  const qrPayload = JSON.stringify({
+    type: 'GENTS_CUSTOMER',
+    customerId: customer.rows[0].id,
+    customerCode: customer.rows[0].customer_code,
+  });
+
+  const dataUrl = await QRCode.toDataURL(qrPayload, {
+    margin: 1,
+    width: 320,
+    color: { dark: '#0A0A0A', light: '#FFFFFF' },
+  });
+
   res.json({ success: true, data: { qrPayload, dataUrl, customer: customer.rows[0] } });
 }));
 
@@ -142,10 +173,9 @@ router.post('/', validate(signupSchema), asyncHandler(async (req, res) => {
      ORDER BY verified_at DESC LIMIT 1`,
     [normalizedPhone],
   );
+
   if (!verifiedOtp.rowCount) throw new ApiError(401, 'Please verify OTP before creating account');
 
-  // If the same verified phone already exists, treat signup like login and return the existing customer.
-  // This prevents "internal server error" when a customer retries after a previous successful signup.
   const existingByPhone = await query('SELECT * FROM customers WHERE phone = $1', [normalizedPhone]);
   if (existingByPhone.rowCount) {
     const updated = await query(
@@ -160,6 +190,7 @@ router.post('/', validate(signupSchema), asyncHandler(async (req, res) => {
        RETURNING *`,
       [fullName, normalizedEmail, normalizedPhone, birthday],
     );
+
     return res.json({ success: true, data: updated.rows[0], message: 'Existing verified account loaded.' });
   }
 
@@ -187,21 +218,40 @@ router.post('/:id/profile-image', validate(z.object({
   }),
 })), asyncHandler(async (req, res) => {
   const { imageData } = req.body;
-if (!imageData.startsWith('data:image/')) {
-  throw new ApiError(400, 'profile image must be a data:image URI');
-}
+
+  if (!imageData.startsWith('data:image/')) {
+    throw new ApiError(400, 'profile image must be a data:image URI');
+  }
 
   const result = await query(
     'UPDATE customers SET profile_image_url = $1 WHERE id = $2 RETURNING id, customer_code, full_name, phone, email, profile_image_url',
     [imageData, req.params.id],
   );
+
   if (!result.rowCount) throw new ApiError(404, 'Customer not found');
 
   res.json({ success: true, data: result.rows[0], message: 'Profile photo updated' });
 }));
 
 router.put('/:id', requireAdmin, asyncHandler(async (req, res) => {
-  const allowed = ['full_name','phone','email','birthday','stamps','points','visits','current_streak','longest_streak','vip','otp_verified','profile_image_url','customer_notes','preferences','vip_tier_override'];
+  const allowed = [
+    'full_name',
+    'phone',
+    'email',
+    'birthday',
+    'stamps',
+    'points',
+    'visits',
+    'current_streak',
+    'longest_streak',
+    'vip',
+    'otp_verified',
+    'profile_image_url',
+    'customer_notes',
+    'preferences',
+    'vip_tier_override',
+  ];
+
   const entries = Object.entries(req.body).filter(([key]) => allowed.includes(key));
   if (!entries.length) throw new ApiError(400, 'No allowed fields provided');
 
@@ -212,14 +262,23 @@ router.put('/:id', requireAdmin, asyncHandler(async (req, res) => {
   const result = await query(`UPDATE customers SET ${sets} WHERE id = $${values.length} RETURNING *`, values);
   if (!result.rowCount) throw new ApiError(404, 'Customer not found');
 
-  await query('INSERT INTO security_logs (admin_user_id, action, ip_address, user_agent, metadata) VALUES ($1,$2,$3,$4,$5)', [req.admin.id, 'customer_updated', req.ip, req.headers['user-agent'], { customerId: req.params.id, fields: entries.map(([key]) => key) }]);
+  await query(
+    'INSERT INTO security_logs (admin_user_id, action, ip_address, user_agent, metadata) VALUES ($1,$2,$3,$4,$5)',
+    [req.admin.id, 'customer_updated', req.ip, req.headers['user-agent'], { customerId: req.params.id, fields: entries.map(([key]) => key) }],
+  );
+
   res.json({ success: true, data: result.rows[0] });
 }));
 
 router.delete('/:id', requireAdmin, asyncHandler(async (req, res) => {
   const result = await query('DELETE FROM customers WHERE id = $1 RETURNING id', [req.params.id]);
   if (!result.rowCount) throw new ApiError(404, 'Customer not found');
-  await query('INSERT INTO security_logs (admin_user_id, action, ip_address, user_agent, metadata) VALUES ($1,$2,$3,$4,$5)', [req.admin.id, 'customer_deleted', req.ip, req.headers['user-agent'], { customerId: req.params.id }]);
+
+  await query(
+    'INSERT INTO security_logs (admin_user_id, action, ip_address, user_agent, metadata) VALUES ($1,$2,$3,$4,$5)',
+    [req.admin.id, 'customer_deleted', req.ip, req.headers['user-agent'], { customerId: req.params.id }],
+  );
+
   res.json({ success: true, message: 'Customer deleted' });
 }));
 
