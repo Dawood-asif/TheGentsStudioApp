@@ -45,21 +45,47 @@ export default function AboutUsPage() {
     }));
   };
 
-  const uploadPersonPhoto = async (person, file) => {
-    if (!file) return;
-    const dataUrl = await fileToDataUrl(file);
-    updatePerson(person, 'photoUrl', dataUrl);
-  };
+const uploadPersonPhoto = async (person, file) => {
+  if (!file) return;
 
-  const uploadSalonPhoto = async file => {
-    if (!file) return;
+  try {
+    setMessage(`Uploading ${person} photo...`);
     const dataUrl = await fileToDataUrl(file);
+    const upload = await api.uploadImage({
+      imageData: dataUrl,
+      folder: 'about',
+      filePrefix: person,
+    });
+
+    updatePerson(person, 'photoUrl', upload.data.url);
+    setMessage(`${person} photo uploaded. Click Save About Us to apply.`);
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
+
+const uploadSalonPhoto = async file => {
+  if (!file) return;
+
+  try {
+    setMessage('Uploading salon photo...');
+    const dataUrl = await fileToDataUrl(file);
+    const upload = await api.uploadImage({
+      imageData: dataUrl,
+      folder: 'salon',
+      filePrefix: 'salon',
+    });
+
     setAbout(current => ({
       ...current,
-      salonPhotos: [...(current.salonPhotos || []), dataUrl],
+      salonPhotos: [...(current.salonPhotos || []), upload.data.url],
     }));
-  };
 
+    setMessage('Salon photo uploaded. Click Save About Us to apply.');
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
   const removeSalonPhoto = index => {
     setAbout(current => ({
       ...current,
