@@ -65,17 +65,24 @@ export default function StaffPage() {
     }));
   };
 
-  const uploadPhoto = async file => {
-    if (!file) return;
+ const uploadPhoto = async file => {
+  if (!file) return;
 
-    try {
-      const dataUrl = await fileToDataUrl(file);
-      setForm(current => ({ ...current, photoUrl: dataUrl }));
-      setMessage('Staff photo loaded. Click Save to apply.');
-    } catch (error) {
-      setMessage(error.message);
-    }
-  };
+  try {
+    setMessage('Uploading staff photo...');
+    const dataUrl = await fileToDataUrl(file);
+    const upload = await api.uploadImage({
+      imageData: dataUrl,
+      folder: 'staff',
+      filePrefix: form.name || 'staff',
+    });
+
+    setForm(current => ({ ...current, photoUrl: upload.data.url }));
+    setMessage('Staff photo uploaded. Click Save to apply.');
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
 
   const startEdit = member => {
     setEditingId(member.id);
