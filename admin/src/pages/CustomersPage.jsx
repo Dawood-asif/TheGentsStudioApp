@@ -76,32 +76,49 @@ const [vipDraft, setVipDraft] = useState('Auto');
     }
   };
 
-  const editNotes = async customer => {
-    const notes = window.prompt(`Notes for ${customer.full_name}`, customer.customer_notes || '');
-    if (notes === null) return;
+const openNotesModal = customer => {
+  setSelectedCustomer(customer);
+  setNotesDraft(customer.customer_notes || '');
+  setPreferencesDraft(JSON.stringify(customer.preferences || {}, null, 2));
+  setVipDraft(customer.vip_tier_override || 'Auto');
+  setNotesModalOpen(true);
+};
 
-    const preferencesText = window.prompt(
-      'Preferences JSON example: {"haircut":"low fade","skin":"sensitive"}',
-      JSON.stringify(customer.preferences || {}, null, 2),
-    );
-    if (preferencesText === null) return;
+const closeNotesModal = () => {
+  setNotesModalOpen(false);
+  setSelectedCustomer(null);
+  setNotesDraft('');
+  setPreferencesDraft('{}');
+  setVipDraft('Auto');
+};
 
-    let preferences = {};
-    try {
-      preferences = JSON.parse(preferencesText || '{}');
-    } catch (_) {
-      setMessage('Invalid preferences JSON.');
-      return;
-    }
+const saveNotesModal = async () => {
+  if (!selectedCustomer) return;
 
-    try {
-      await api.updateCustomer(customer.id, { customer_notes: notes, preferences });
-      setMessage(`Notes updated for ${customer.full_name}.`);
-      load();
-    } catch (error) {
-      setMessage(error.message);
-    }
-  };
+  let preferences = {};
+  try {
+    preferences = JSON.parse(preferencesDraft || '{}');
+  } catch (_) {
+    setMessage('Invalid preferences JSON.');
+    return;
+  }
+
+  const vip_tier_override = vipDraft === 'Auto' ? null : vipDraft;
+
+  try {
+    await api.updateCustomer(selectedCustomer.id, {
+      customer_notes: notesDraft,
+      preferences,
+      vip_tier_override,
+    });
+
+    setMessage(`Customer details updated for ${selectedCustomer.full_name}.`);
+    closeNotesModal();
+    load();
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
 
   const editVip = async customer => {
     const options = ['Auto', 'Member', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
@@ -150,7 +167,7 @@ const [vipDraft, setVipDraft] = useState('Auto');
       render: row => (
         <div className="action-buttons">
           <button className="btn secondary" onClick={() => addStamp(row)}>+ Stamp</button>
-          <button className="btn secondary" onClick={() => editNotes(row)}>Notes</button>
+          <button className="btn secondary" onClick={() => openNotesModal(row)}>Notes</button>
           <button className="btn secondary" onClick={() => editVip(row)}>VIP</button>
         </div>
       ),
@@ -168,6 +185,60 @@ const [vipDraft, setVipDraft] = useState('Auto');
       <p className="muted">{message}</p>
 
       <DataTable columns={columns} rows={customers} />
+      {notesModalOpen && selectedCustomer && (
+  <div className="modal-backdrop">
+    <div className="notes-modal">
+      <div className="modal-header">
+        <div className="modal-customer">
+          {selectedCustomer.profile_image_url ? (
+            <img className="customer-photo" src={selectedCustomer.profile_image_url} alt={selectedCustomer.full_name} />
+          ) : (
+            <span className="customer-photo placeholder">{(selectedCustomer.full_name || '?').slice(0, 1)}</span>
+          )}
+
+          <div>
+            <h2>{selectedCustomer.full_name}</h2>
+            <p className="muted">{selectedCustomer.phone} | {selectedCustomer.email}</p>
+            <span className="badge">{selectedCustomer.customer_code}</span>
+          </div>
+        </div>
+
+        <button className="btn secondary" onClick={closeNotesModal}>Close</button>
+      </div>
+
+      <div className="form-grid">
+        <label className="field-label">Customer Notes</label>
+        <textarea
+          value={notesDraft}
+          onChange={event => setNotesDraft(event.target.value)}
+          rows="6"
+          placeholder="Example: Prefers low fade, sensitive skin, likes sharp beard line..."
+        />
+
+        <label className="field-label">Preferences JSON</label>
+        <textarea
+          value={preferencesDraft}
+          onChange={event => setPreferencesDraft(event.target.value)}
+          rows="5"
+          placeholder='{"haircut":"low fade","skin":"sensitive","beard":"sharp line"}'
+        />
+
+        <label className="field-label">VIP Tier Override</label>
+        <select value={vipDraft} onChange={event => setVipDraft(event.target.value)}>
+          <option>Auto</option>
+          <option>Member</option>
+          <option>Bronze</option>
+          <option>Silver</option>
+          <option>Gold</option>
+          <option>Platinum</option>
+          <option>Diamond</option>
+        </select>
+
+        <button className="btn" onClick={saveNotesModal}>Save Customer Details</button>
+      </div>
+    </div>
+  </div>
+)}
     </section>
   );
 }
