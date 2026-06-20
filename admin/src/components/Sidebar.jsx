@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from '../assets/logo.png';
 
 const navItems = [
   'Dashboard',
@@ -18,8 +17,13 @@ const navItems = [
 export default function Sidebar({ activePage, setActivePage, onLogout }) {
   return (
     <aside className="sidebar">
-      <img className="logo image-logo" src={logo} alt="The Gents Studio & Spa" />
-      <div className="brand">The Gents<br />Studio & Spa</div>
+      <div className="logo">GS</div>
+
+      <div className="brand">
+        The Gents<br />
+        Studio & Spa
+      </div>
+
       <nav className="nav">
         {navItems.map(item => (
           <button
@@ -30,6 +34,7 @@ export default function Sidebar({ activePage, setActivePage, onLogout }) {
             {item}
           </button>
         ))}
+
         <button onClick={onLogout}>Logout</button>
       </nav>
     </aside>

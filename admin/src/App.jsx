@@ -32,7 +32,9 @@ export default function App() {
   const [token, setToken] = useState(getToken());
   const [activePage, setActivePage] = useState('Dashboard');
 
-  const ActiveComponent = useMemo(() => pages[activePage] || DashboardPage, [activePage]);
+  const ActiveComponent = useMemo(() => {
+    return pages[activePage] || DashboardPage;
+  }, [activePage]);
 
   if (!token) return <LoginPage onLogin={() => setToken(getToken())} />;
 
@@ -44,14 +46,19 @@ export default function App() {
   return (
     <div className="app-shell">
       <Sidebar activePage={activePage} setActivePage={setActivePage} onLogout={logout} />
+
       <main className="content">
         <div className="topbar">
           <div>
             <h1>{activePage}</h1>
             <p className="muted">The Gents Studio & Spa owner control panel</p>
           </div>
-          <button className="btn secondary" onClick={logout}>Logout</button>
+
+          <button className="btn secondary" onClick={logout}>
+            Logout
+          </button>
         </div>
+
         <ActiveComponent />
       </main>
     </div>

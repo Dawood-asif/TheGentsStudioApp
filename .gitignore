@@ -32,3 +32,5 @@ ios/build/
 .git-credentials
 .netrc
 .vercel/
+.vercel
+.env*

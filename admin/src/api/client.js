@@ -30,10 +30,7 @@ export async function apiRequest(path, options = {}) {
   });
 
   const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(data.message || 'Request failed');
-  }
+  if (!response.ok) throw new Error(data.message || 'Request failed');
 
   return data;
 }
@@ -48,12 +45,14 @@ export const api = {
   updateCustomer: (id, body) => apiRequest(`/api/customers/${id}`, { method: 'PUT', body }),
 
   services: () => apiRequest('/api/services'),
-createService: body => apiRequest('/api/services', { method: 'POST', body }),
-updateService: (id, body) => apiRequest(`/api/services/${id}`, { method: 'PUT', body }),
-deleteService: id => apiRequest(`/api/services/${id}`, { method: 'DELETE' }),
+  createService: body => apiRequest('/api/services', { method: 'POST', body }),
+  updateService: (id, body) => apiRequest(`/api/services/${id}`, { method: 'PUT', body }),
+  deleteService: id => apiRequest(`/api/services/${id}`, { method: 'DELETE' }),
+
   staff: () => apiRequest('/api/staff'),
-createStaff: body => apiRequest('/api/staff', { method: 'POST', body }),
-updateStaff: (id, body) => apiRequest(`/api/staff/${id}`, { method: 'PUT', body }),
+  createStaff: body => apiRequest('/api/staff', { method: 'POST', body }),
+  updateStaff: (id, body) => apiRequest(`/api/staff/${id}`, { method: 'PUT', body }),
+
   appointments: () => apiRequest('/api/appointments'),
 
   inventory: () => apiRequest('/api/inventory'),
@@ -65,9 +64,11 @@ updateStaff: (id, body) => apiRequest(`/api/staff/${id}`, { method: 'PUT', body 
 
   addStamp: body => apiRequest('/api/stamps/add', { method: 'POST', body }),
 
-  broadcastNotification: body => apiRequest('/api/notifications/broadcast', { method: 'POST', body }),
-
   adminReviews: () => apiRequest('/api/reviews/admin/all'),
   approveReview: id => apiRequest(`/api/reviews/admin/${id}/approve`, { method: 'PUT' }),
   rejectReview: id => apiRequest(`/api/reviews/admin/${id}/reject`, { method: 'PUT' }),
+
+  appNotifications: () => apiRequest('/api/app-notifications/admin/all'),
+  createAppNotification: body => apiRequest('/api/app-notifications/admin', { method: 'POST', body }),
+  updateAppNotification: (id, body) => apiRequest(`/api/app-notifications/admin/${id}`, { method: 'PUT', body }),
 };
