@@ -41,4 +41,7 @@ module.exports = {
   // Firebase Cloud Messaging
   firebaseServiceAccountJson: process.env.FIREBASE_SERVICE_ACCOUNT_JSON || '',
   firebaseServiceAccountPath: process.env.FIREBASE_SERVICE_ACCOUNT_PATH || '',
+  supabaseUrl: process.env.SUPABASE_URL || '',
+supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+supabaseMediaBucket: process.env.SUPABASE_MEDIA_BUCKET || 'tgss-media',
 };
