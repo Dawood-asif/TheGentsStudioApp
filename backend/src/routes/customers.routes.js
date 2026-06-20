@@ -137,8 +137,8 @@ router.post('/:id/profile-image', validate(z.object({
   }),
 })), asyncHandler(async (req, res) => {
   const { imageData } = req.body;
-  if (!imageData.startsWith('data:image/') && !imageData.startsWith('http')) {
-  throw new ApiError(400, 'profile image must be a data:image URI or public URL');
+if (!imageData.startsWith('data:image/')) {
+  throw new ApiError(400, 'profile image must be a data:image URI');
 }
 
   const result = await query(
