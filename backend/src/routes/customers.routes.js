@@ -133,13 +133,13 @@ router.post('/', validate(signupSchema), asyncHandler(async (req, res) => {
 
 router.post('/:id/profile-image', validate(z.object({
   body: z.object({
-    imageData: z.string().min(40).max(2_500_000),
+    imageData: z.string().min(10).max(2_500_000),
   }),
 })), asyncHandler(async (req, res) => {
   const { imageData } = req.body;
-  if (!imageData.startsWith('data:image/')) {
-    throw new ApiError(400, 'profile image must be a data:image URI');
-  }
+  if (!imageData.startsWith('data:image/') && !imageData.startsWith('http')) {
+  throw new ApiError(400, 'profile image must be a data:image URI or public URL');
+}
 
   const result = await query(
     'UPDATE customers SET profile_image_url = $1 WHERE id = $2 RETURNING id, customer_code, full_name, phone, email, profile_image_url',
