@@ -41,10 +41,15 @@ function VipBadge({ row, tiers }) {
 }
 
 export default function CustomersPage() {
-  const [customers, setCustomers] = useState(fallbackCustomers);
-  const [vipTiers, setVipTiers] = useState(VIP_TIERS);
-  const [search, setSearch] = useState('');
-  const [message, setMessage] = useState('Backend offline: demo row shown until API is connected.');
+const [customers, setCustomers] = useState(fallbackCustomers);
+const [vipTiers, setVipTiers] = useState(VIP_TIERS);
+const [search, setSearch] = useState('');
+const [message, setMessage] = useState('Backend offline: demo row shown until API is connected.');
+const [notesModalOpen, setNotesModalOpen] = useState(false);
+const [selectedCustomer, setSelectedCustomer] = useState(null);
+const [notesDraft, setNotesDraft] = useState('');
+const [preferencesDraft, setPreferencesDraft] = useState('{}');
+const [vipDraft, setVipDraft] = useState('Auto');
 
   const load = () => {
     Promise.all([api.customers(search), api.settings()])
