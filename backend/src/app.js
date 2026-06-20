@@ -1,3 +1,4 @@
+const mediaRoutes = require('./routes/media.routes');
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -28,7 +29,7 @@ const app = express();
 
 // Required for Vercel/Netlify/Render proxies so express-rate-limit can read the real client IP safely.
 app.set('trust proxy', 1);
-
+app.use('/api/media', mediaRoutes);
 app.use(helmet());
 app.use(cors({
   origin(origin, callback) {
