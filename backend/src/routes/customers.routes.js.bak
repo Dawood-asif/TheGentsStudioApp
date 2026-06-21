@@ -10,7 +10,6 @@ const ApiError = require('../utils/apiError');
 const { generateCustomerCode, generateReferralCode } = require('../utils/customerIds');
 const { normalizePakistaniPhone } = require('../utils/phone');
 const { verifyOtp } = require('../services/otpService');
-const { uploadDataImage } = require('../services/storageService');
 
 const router = express.Router();
 const PIN_SALT_ROUNDS = 10;
