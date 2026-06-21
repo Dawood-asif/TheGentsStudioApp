@@ -5,7 +5,6 @@ const { requireAdmin } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/apiError');
-const { uploadDataImage } = require('../services/storageService');
 
 const router = express.Router();
 
@@ -46,7 +45,7 @@ router.post('/', validate(z.object({
       body.reviewerName,
       body.rating,
       body.comment,
-      reviewImageUrl,
+      body.reviewImageUrl || null,
       body.googleReviewUrl || null,
     ],
   );
