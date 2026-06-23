@@ -34,3 +34,26 @@ ios/build/
 .vercel/
 .vercel
 .env*
+
+# Dependencies
+node_modules/
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.bak
+
+# IDE
+.idea/
+.vscode/
