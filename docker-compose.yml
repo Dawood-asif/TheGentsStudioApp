@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gentsstudio-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gentsstudio
+      POSTGRES_USER: gentsstudio
+      POSTGRES_PASSWORD: gentsstudio_dev_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - gentsstudio_pg:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+volumes:
+  gentsstudio_pg:

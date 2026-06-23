@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Gents Studio & Spa — All Links</title>
+  <style>
+    :root{--black:#0A0A0A;--gold:#D4AF37;--card:#151515;--muted:#A9A9A9;--white:#fff;--border:#2A2415}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top,#2b2109 0,#0A0A0A 42rem);color:var(--white);min-height:100vh;padding:28px}
+    .wrap{max-width:980px;margin:0 auto}.hero{border:1px solid var(--border);background:rgba(21,21,21,.94);border-radius:28px;padding:28px;margin-bottom:18px;box-shadow:0 20px 90px rgba(0,0,0,.45)}
+    .logo{width:86px;height:86px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-weight:900;font-size:30px;margin-bottom:16px}
+    h1{color:var(--gold);margin:0 0 8px;font-size:clamp(30px,5vw,48px)} h2{color:var(--gold);margin:0 0 12px}.muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.card{border:1px solid var(--border);background:rgba(21,21,21,.94);border-radius:20px;padding:18px}
+    a{display:block;color:#080808;background:var(--gold);text-decoration:none;font-weight:900;border-radius:14px;padding:13px 14px;margin:10px 0;border:1px solid var(--gold)}
+    a.secondary{background:transparent;color:var(--gold)} code{color:var(--gold);word-break:break-word}.small{font-size:13px;line-height:1.5}.pill{display:inline-block;border:1px solid var(--border);background:#1F1A0F;color:var(--gold);padding:6px 10px;border-radius:999px;margin:4px 4px 0 0;font-size:12px;font-weight:800}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="logo">GS</div>
+      <h1>The Gents Studio & Spa</h1>
+      <p class="muted">One page containing every important project link, folder, document, and deployment target.</p>
+      <span class="pill">Black #0A0A0A</span><span class="pill">Gold #D4AF37</span><span class="pill">54 Services</span><span class="pill">Backend + Mobile + Admin</span>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Main Download</h2>
+        <a href="../TheGentsStudioApp-scaffold.zip">Download Complete ZIP</a>
+        <a class="secondary" href="README.md">Project README</a>
+        <a class="secondary" href="LAUNCH_DEPLOYMENT_COMMANDS.md">Exact Launch Deployment Commands</a>
+        <a class="secondary" href="LAUNCH_STATUS.md">Current Launch Status</a>
+      </div>
+
+      <div class="card">
+        <h2>Documentation</h2>
+        <a class="secondary" href="docs/SRS.md">Software Requirements Specification</a>
+        <a class="secondary" href="docs/API.md">Backend API Docs</a>
+        <a class="secondary" href="docs/DATABASE.md">Database Docs</a>
+        <a class="secondary" href="docs/DEPLOYMENT.md">Deployment Guide</a>
+        <a class="secondary" href="docs/SECURITY.md">Security Plan</a>
+        <a class="secondary" href="docs/FEATURE_CHECKLIST.md">Feature Checklist</a>
+        <a class="secondary" href="docs/PRIORITY_FIXES_APPLIED.md">Priority Fixes Applied</a>
+        <a class="secondary" href="docs/LUXURY_POLISH_UPGRADE.md">Ultra-Luxury Polish Upgrade</a>
+        <a class="secondary" href="docs/PRODUCTION_BLOCKERS_RESOLUTION.md">Production Blockers Resolution</a>
+      </div>
+
+      <div class="card">
+        <h2>Source Folders</h2>
+        <a class="secondary" href="mobile/README.md">Mobile App README</a>
+        <a class="secondary" href="backend/package.json">Backend Package</a>
+        <a class="secondary" href="admin/package.json">Admin Package</a>
+        <a class="secondary" href="database/schema.sql">PostgreSQL Schema</a>
+        <a class="secondary" href="database/seed.sql">Database Seed SQL</a>
+        <a class="secondary" href="render.yaml">Render Blueprint</a>
+        <a class="secondary" href="admin/netlify.toml">Netlify Config</a>
+      </div>
+
+      <div class="card">
+        <h2>Admin Login</h2>
+        <p class="small muted">Seeded owner account:</p>
+        <p class="small"><code>admin@thegentsstudio.com</code></p>
+        <p class="small"><code>Admin@2024</code></p>
+        <p class="small muted">Change password before production deployment.</p>
+      </div>
+
+      <div class="card">
+        <h2>Free Hosting Links</h2>
+        <a class="secondary" href="https://render.com/" target="_blank" rel="noreferrer">Render Backend Hosting</a>
+        <a class="secondary" href="https://www.netlify.com/" target="_blank" rel="noreferrer">Netlify Admin Hosting</a>
+        <a class="secondary" href="https://vercel.com/" target="_blank" rel="noreferrer">Vercel Admin Hosting</a>
+        <a class="secondary" href="https://supabase.com/" target="_blank" rel="noreferrer">Supabase PostgreSQL</a>
+        <a class="secondary" href="https://firebase.google.com/" target="_blank" rel="noreferrer">Firebase Push Notifications</a>
+      </div>
+
+      <div class="card">
+        <h2>Local Commands</h2>
+        <p class="small"><code>cd backend && npm install && npm run db:schema && npm run seed && npm run dev</code></p>
+        <p class="small"><code>cd admin && npm install && npm run dev</code></p>
+        <p class="small"><code>cd mobile && npm install --legacy-peer-deps && npm run android</code></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

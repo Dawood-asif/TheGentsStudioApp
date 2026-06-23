@@ -1,0 +1,26 @@
+name: Preflight
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-and-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Backend check
+        working-directory: backend
+        run: |
+          npm ci
+          npm run check
+      - name: Admin build
+        working-directory: admin
+        run: |
+          npm ci
+          npm run build

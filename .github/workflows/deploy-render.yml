@@ -1,0 +1,22 @@
+name: Trigger Render Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - 'render.yaml'
+
+jobs:
+  deploy-render:
+    runs-on: ubuntu-latest
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+    steps:
+      - name: Trigger Render deploy hook
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
+      - name: Render auto deploy note
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL == '' }}
+        run: echo "Set RENDER_DEPLOY_HOOK_URL secret or enable Render auto-deploy from GitHub."
