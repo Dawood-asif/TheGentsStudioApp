@@ -6,7 +6,7 @@ on:
     branches: [ main ]
     paths:
       - 'backend/**'
-      - 'render.yaml'
+      - 'deploy/render.yaml'
 
 jobs:
   deploy-render:
