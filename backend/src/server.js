@@ -1,3 +1,7 @@
+// =============================================
+// CLEAN VERSION - Replace entire file with this
+// =============================================
+
 const app = require('./app');
 const env = require('./config/env');
 const { pool } = require('./config/db');
