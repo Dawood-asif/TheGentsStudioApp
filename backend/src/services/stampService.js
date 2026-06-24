@@ -1,6 +1,6 @@
-﻿const { getTierForPoints } = require('../utils/vipTiers');
 const { withTransaction } = require('../config/db');
 const ApiError = require('../utils/apiError');
+const { getTierForPoints } = require('../utils/vipTiers');
 
 const STREAK_REWARDS = {
   2: { points: 50, stamps: 0, freeService: 0, label: '2 week streak: +50 points' },
@@ -40,51 +40,56 @@ async function addVisitStamp({ customerId, customerCode, phone, serviceId, appoi
 
     const customerResult = await client.query(`SELECT * FROM customers WHERE ${identifierWhere} FOR UPDATE`, [identifierValue]);
     if (!customerResult.rowCount) throw new ApiError(404, 'Customer not found');
+
     const customer = customerResult.rows[0];
 
     const existingToday = await client.query(
-      `SELECT id FROM stamp_transactions
-       WHERE customer_id = $1 AND source = 'visit' AND transaction_date = CURRENT_DATE AND stamps_delta > 0
-       LIMIT 1`,
-      [customer.id],
+      `SELECT id FROM stamp_transactions WHERE customer_id = $1 AND source = 'visit' AND transaction_date = CURRENT_DATE AND stamps_delta > 0 LIMIT 1`,
+      [customer.id]
     );
+
     if (existingToday.rowCount) throw new ApiError(409, 'Anti-cheat: customer already received a visit stamp today');
 
     const settingsResult = await client.query("SELECT value FROM settings WHERE key = 'loyalty'");
-    const loyalty = settingsResult.rows[0]?.value || { stampsNeeded: 10, pointsPerStamp: 100, rewardType: 'FREE_SERVICE' };
+    const loyalty = settingsResult.rows[0]?.value || { stampsNeeded: 15, pointsPerStamp: 100, rewardType: 'FREE_SERVICE' };
+
     const pointsPerStamp = Number(loyalty.pointsPerStamp || 100);
-    const stampsNeeded = Number(loyalty.stampsNeeded || 10);
+    const stampsNeeded = Number(loyalty.stampsNeeded || 15);
 
     const streak = calculateStreak(customer.last_visit_date, customer.current_streak, new Date());
     const milestone = streak.changed ? STREAK_REWARDS[streak.currentStreak] : null;
+
     const rewardStamps = milestone?.stamps || 0;
     const rewardPoints = milestone?.points || 0;
     const freeServiceRewards = milestone?.freeService || 0;
 
     const baseStamps = 1;
     const basePoints = pointsPerStamp;
+
     const oldStamps = Number(customer.stamps || 0);
     const newStamps = oldStamps + baseStamps + rewardStamps;
     const newPoints = Number(customer.points || 0) + basePoints + rewardPoints;
+
     const newStreak = streak.currentStreak;
     const newLongest = Math.max(Number(customer.longest_streak || 0), newStreak);
+
     const rewardUnlocked = Math.floor(newStamps / stampsNeeded) > Math.floor(oldStamps / stampsNeeded);
 
     await client.query(
       `INSERT INTO stamp_transactions (customer_id, service_id, appointment_id, stamps_delta, points_delta, source, note, created_by_admin_id)
        VALUES ($1,$2,$3,$4,$5,'visit',$6,$7)`,
-      [customer.id, serviceId || null, appointmentId || null, baseStamps, basePoints, note || 'Visit stamp', adminId || null],
+      [customer.id, serviceId || null, appointmentId || null, baseStamps, basePoints, note || 'Visit stamp', adminId || null]
     );
 
     if (milestone && (rewardStamps || rewardPoints || freeServiceRewards)) {
       await client.query(
         `INSERT INTO stamp_transactions (customer_id, stamps_delta, points_delta, source, note, created_by_admin_id)
          VALUES ($1,$2,$3,'streak_reward',$4,$5)`,
-        [customer.id, rewardStamps, rewardPoints, milestone.label, adminId || null],
+        [customer.id, rewardStamps, rewardPoints, milestone.label, adminId || null]
       );
     }
 
-    const currentTier = getTierForPoints(newPoints).name;
+    const currentTier = getTierForPoints(newPoints).tier_name;
 
     const updated = await client.query(
       `UPDATE customers
@@ -99,7 +104,7 @@ async function addVisitStamp({ customerId, customerCode, phone, serviceId, appoi
            current_tier = $6
        WHERE id = $7
        RETURNING *`,
-      [newStamps, newPoints, newStreak, newLongest, freeServiceRewards, currentTier, customer.id],
+      [newStamps, newPoints, newStreak, newLongest, freeServiceRewards, currentTier, customer.id]
     );
 
     return {
