@@ -1,3 +1,4 @@
+﻿const { getTierForPoints } = require('../utils/vipTiers');
 const { withTransaction } = require('../config/db');
 const ApiError = require('../utils/apiError');
 
@@ -83,6 +84,8 @@ async function addVisitStamp({ customerId, customerCode, phone, serviceId, appoi
       );
     }
 
+    const currentTier = getTierForPoints(newPoints).name;
+
     const updated = await client.query(
       `UPDATE customers
        SET stamps = $1,
@@ -92,10 +95,11 @@ async function addVisitStamp({ customerId, customerCode, phone, serviceId, appoi
            longest_streak = $4,
            last_visit_date = CURRENT_DATE,
            free_service_rewards = free_service_rewards + $5,
-           vip = CASE WHEN $2 >= 5000 OR vip = TRUE THEN TRUE ELSE FALSE END
-       WHERE id = $6
+           vip = CASE WHEN $2 >= 5000 OR vip = TRUE THEN TRUE ELSE FALSE END,
+           current_tier = $6
+       WHERE id = $7
        RETURNING *`,
-      [newStamps, newPoints, newStreak, newLongest, freeServiceRewards, customer.id],
+      [newStamps, newPoints, newStreak, newLongest, freeServiceRewards, currentTier, customer.id],
     );
 
     return {
